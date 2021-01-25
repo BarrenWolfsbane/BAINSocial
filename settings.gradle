@@ -1,0 +1,2 @@
+include ':app', ':android-pgp'
+rootProject.name = "BAINSocial"

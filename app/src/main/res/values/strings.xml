@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BAINSocial</string>
+    <string name="send_text">Send Now</string>
+    <string name="title_public_keys">Public Keys</string>
+    <string name="title_secret_keys">Secret Keys</string>
+    <string name="title_find_keys">Find Keys</string>
+</resources>
