@@ -2,25 +2,85 @@ package tv.bain.bainsocial;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.io.File;
+
+import javax.crypto.SecretKey;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 @SuppressLint("SetTextI18n")
-public class MainActivity extends AppCompatActivity {
+interface ICallback{
+    public void loginSecretCallback(SecretKey secret);
+    public void loginKeyDBCallback(int count);
+}
+public class MainActivity extends AppCompatActivity implements ICallback {
     private Context context;
+    private Crypt crypt;
+    String CurrentLayout = "";
 
+    private User me;
+    public User getMe(){ return me; }
 
-    @Override
+    private DBManager db;
+    public DBManager getDb(){ return db;}
+
+    private FileControls fc;
+    public FileControls getFc(){ return fc;}
+
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(CurrentLayout.matches("R.layout.permission_init")) {
+                        Button agree = findViewById(R.id.agreeAndContinue);
+                        if(checkPermission()) agree.setEnabled(true);
+                    }
+                } else {
+                    if(CurrentLayout.matches("R.layout.permission_init")) {
+                        Button agree = findViewById(R.id.agreeAndContinue);
+                        if(!checkPermission()) agree.setEnabled(false);
+                    }
+                }
+            }
+        }
+    }
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        if(CurrentLayout.matches("R.layout.permission_init")){
+            Button extStoragePermBtn = findViewById(R.id.extStoragePermBtn);
+            if(result == PackageManager.PERMISSION_GRANTED) extStoragePermBtn.setEnabled(false);
+            else if (result == PackageManager.PERMISSION_DENIED) extStoragePermBtn.setEnabled(true);
+        }
+        //int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        //return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getBaseContext();
-        LoadLoginScreen();
+        crypt = new Crypt(this); //Creates a Crypt object
+        db = new DBManager(this, this);
+        fc = new FileControls(this, context);
+        me = new User(this);
+
+        if(checkPermission()) LoadLoginScreen(); //required perms are good, go to Login Screen
+        else PermissionSetup(); //Permissions are not set, run permissions
+
         /*
         etIP = findViewById(R.id.etIP);
         etPort = findViewById(R.id.etPort);
@@ -81,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                     TextView Private_Key = findViewById(R.id.PrivateKey_Field);
-                    Private_Key.setText(privateKey);
                     TextView Public_Key = findViewById(R.id.PublicKey_Field);
+                    Private_Key.setText(privateKey);
                     Public_Key.setText(publicKey);
 
                     DBManager Database = new DBManager(context);
@@ -95,118 +155,129 @@ public class MainActivity extends AppCompatActivity {
         });
         */
     }
+    public void PermissionSetup(){
+        setContentView(R.layout.permission_init);
+        CurrentLayout = "R.layout.permission_init";
+
+        Button extStoragePermBtn = findViewById(R.id.extStoragePermBtn);
+        extStoragePermBtn.setOnClickListener(v -> {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE},1);
+        });
+        Button agree = findViewById(R.id.agreeAndContinue);
+        agree.setEnabled(false);
+        agree.setOnClickListener(v -> { LoadLoginScreen(); });
+    }
     public void LoadLoginScreen(){
         setContentView(R.layout.login_activity);
+        CurrentLayout = "R.layout.login_activity";
         Switch useBlockchain = findViewById(R.id.LoginLayoutOption);
         useBlockchain.setChecked(false);
+        useBlockchain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LinearLayout CryptoOptions = findViewById(R.id.CryptoRecovery);
+                LinearLayout NormalOptions = findViewById(R.id.DeviceLogin);
+                if(isChecked) { NormalOptions.setVisibility(View.GONE); CryptoOptions.setVisibility(View.VISIBLE); }
+                else { NormalOptions.setVisibility(View.VISIBLE); CryptoOptions.setVisibility(View.GONE); }
+            }
+        });
 
         TextView loginPassEntry = findViewById(R.id.loginPassPhraseEntry);
         TextView loginPassEntryConfirm = findViewById(R.id.loginPassPhraseRepeatEntry);
         TextView LoginErrorDisplay = findViewById(R.id.LoginErrorDisplay);
-
-        String LoginPass = loginPassEntry.getText().toString();
-        String LoginRepeat = loginPassEntryConfirm.getText().toString();
+        TextView loginTransID = findViewById(R.id.loginTransactionEntry);
+        TextView loginTransPass = findViewById(R.id.loginTransactionPassEntry);
 
         Button LoginButton = findViewById(R.id.LoginButton);
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastServer("attempting Login");
-                LoginErrorDisplay.setText("LoginPass:"+LoginPass+" - Repeat: "+LoginRepeat);
-                //LoadMainPage();
-                /*
-                if(!useBlockchain.isChecked()) {
-                    if (LoginPass.isEmpty()) LoginErrorDisplay.setText("Login pass is empty");
-                    else if (LoginRepeat.isEmpty()) LoginErrorDisplay.setText("Login Check pass is empty");
-                    else {
-                        LoginErrorDisplay.setText("");
-                        if (LoginPass.equals(LoginRepeat)) {
-                            LoginErrorDisplay.setText("Accepted");
-                            //me.setSecret(Crypt.generateSecret(loginPassEntry.getText().toString()));
-                            //me.initializeUser();
-                            LoadMainPage();
-                        } else {
-                            LoginErrorDisplay.setText("Both Passwords Must Match");
-                        }
-                    }
-                }*/
+                if(useBlockchain.isChecked()){
+                    String loginType = "Login Type - Blockchain Recovery";
+                    String Txn = loginTransID.getText().toString();
+                    String LoginPass = loginTransPass.getText().toString();
+                    LoginErrorDisplay.setText("Blockchain Backups are not Functioning at this time"); //TODO: Make Blockchain Backups a thing
+                }
+                else {
+                    String loginType = "Login Type - Local Passphrase";
+                    String LoginPass = loginPassEntry.getText().toString();
+                    String LoginRepeat = loginPassEntryConfirm.getText().toString();
+                    if(isEmptyString(LoginPass) || isEmptyString(LoginRepeat))
+                        LoginErrorDisplay.setText("Neither the Passphrase not the check may be Empty");
+                    else if(!LoginPass.matches(LoginRepeat))
+                        LoginErrorDisplay.setText("Both the Passphrase and the Check must match");
+                    else
+                        loginProcess(loginType, LoginPass);
+                }
             }
         });
+    } //this is the display and operations of the layout
+    public void loginProcess(String LoginType ,String LoginPass){
+        setContentView(R.layout.login_process);
+        CurrentLayout = "R.layout.login_process";
+        String hashedPass = crypt.md5(LoginPass);
+        me.setHashedPass(hashedPass);
+
+        TextView loginProcessTypeLabel = findViewById(R.id.loginProcessTypeLabel);
+        loginProcessTypeLabel.setText(LoginType);
+
+        TextView loginStepOneLabel = findViewById(R.id.stepOneLoginLabel);
+        loginStepOneLabel.setVisibility(View.VISIBLE);
+        TextView loginStepOneProcess = findViewById(R.id.stepOneLoginProgress);
+        loginStepOneProcess.setVisibility(View.VISIBLE);
+        loginStepOneProcess.setTextColor(Color.parseColor("#CDDC39"));
+
+        TextView loginStepTwoLabel = findViewById(R.id.stepTwoLoginLabel);
+        loginStepTwoLabel.setVisibility(View.VISIBLE);
+        loginStepTwoLabel.setText(" ");
+        TextView loginStepTwoProcess = findViewById(R.id.stepTwoLoginProgress);
+        loginStepTwoProcess.setVisibility(View.VISIBLE);
+        loginStepTwoProcess.setText(" ");
+
+        crypt.generateSecret(this, hashedPass); //Sends back to loginSecretCallback(SecretKey secret)
+    } //the active Login Process with ASync
+    boolean isEmptyString(String string) { return string == null || string.isEmpty(); }
+
+    public void loginSecretCallback(SecretKey secret) {
+        if(CurrentLayout.matches("R.layout.login_process")){
+            TextView loginProcess = findViewById(R.id.stepOneLoginProgress);
+            loginProcess.setTextColor(Color.parseColor("#FF00FB97"));
+            loginProcess.setText("Complete");
+            me.setSecret(secret);
+
+            TextView loginStepTwoLabel = findViewById(R.id.stepTwoLoginLabel);
+            loginStepTwoLabel.setText("Checking For Keys -");
+            TextView loginStepTwoProcess = findViewById(R.id.stepTwoLoginProgress);
+            loginStepTwoProcess.setText(" In Progress");
+
+            db.open();
+            db.getMyKeyData(this, me, secret); //Sends back to loginKeyDBCallback(int count)
+            db.close();
+        }
     }
-    public void LoadMainPage(){
-        setContentView(R.layout.activity_main);
-    }
-    public void toastServer(String message) { Toast.makeText(context, message, Toast.LENGTH_SHORT).show(); }
-    /*
+    public void loginKeyDBCallback(int count){
+        TextView loginStepTwoProcess = findViewById(R.id.stepTwoLoginProgress);
+        TextView debugger = findViewById(R.id.KeyDisplay);
 
-
-    String SERVER_IP;
-    int SERVER_PORT;
-    Thread Thread1 = null;
-    EditText etIP, etPort;
-    TextView tvMessages;
-    EditText etMessage;
-    Button btnSend;
-    Button changeBTN;
-    BAINServer newBAIN;
-
-    private PrintWriter output;
-    private BufferedReader input;
-    class Thread1 implements Runnable {
-        public void run() {
-            Socket socket;
-            try {
-                socket = new Socket(SERVER_IP, SERVER_PORT);
-                output = new PrintWriter(socket.getOutputStream());
-                input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() { tvMessages.setText("Connected\n"); }
-                });
-                new Thread(new Thread2()).start();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(count > 0){
+            loginStepTwoProcess.setText("FOUND");
+            if(checkLoginToken(debugger)) ; //Can Decode, go to main page
+            else LoadLoginScreen(); //cannot decode, go back to login
+        }
+        else{
+            loginStepTwoProcess.setText("DB Entry Not Found");
+            //TODO:If Database entry not found we check for files. and create User from it if we find it
+            if(!fc.keyChecker(me)) fc.createKeyFiles(debugger); //The File Creation method doesn't pull database info
+            else if(fc.loadKeyFiles(debugger,true)){
+                if(checkLoginToken(debugger)) ; //Can Decode, go to main page
+                else LoadLoginScreen(); //cannot decode, go back to login
             }
         }
     }
-    class Thread2 implements Runnable {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    final String message = input.readLine();
-                    if (message != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() { tvMessages.append("server: " + message + "\n"); }
-                        });
-                    } else {
-                        Thread1 = new Thread(new Thread1());
-                        Thread1.start();
-                        return;
-                    }
-                } catch (IOException e) { e.printStackTrace(); }
-            }
-        }
+    public boolean checkLoginToken(TextView keyDataOut){ //ensures the password produces the same
+        String KeyDataDirectory =  "/key_data/";
+        File fileDir = new File(context.getFilesDir(), KeyDataDirectory);
+        keyDataOut.setText("Checking Secrets...");
+       // byte[] base64Dec = fc.readFile(new File(fileDir, "LoginToken"),true);
+        return true;
     }
-    class Thread3 implements Runnable {
-        private String message;
-        Thread3(String message) {
-            this.message = message;
-        }
-        @Override
-        public void run() {
-            output.write(message);
-            output.flush();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    tvMessages.append("client: " + message + "\n");
-                    etMessage.setText("");
-                }
-            });
-        }
-    }
-
-     */
 }

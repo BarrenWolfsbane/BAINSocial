@@ -26,9 +26,8 @@ import java.util.*
  */
 object Pgp {
     private const val KEY_RING_ID = "jan.rabe@kibotu.net"
-    init {
-        Security.addProvider(BouncyCastleProvider())
-    }
+    init { Security.addProvider(BouncyCastleProvider()) }
+
     private var publicKey: ByteArray? = null
     private var privateKey: ByteArray? = null
     var strength: Int = 2048

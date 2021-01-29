@@ -1,0 +1,92 @@
+
+        String KeyDataDirectory =  "/key_data/";
+        File fileDir = new File(context.getFilesDir(), KeyDataDirectory);
+        File privKeyFile = new File(fileDir, "private.key");
+        File pubKeyFile = new File(fileDir, "public.key");
+        if(doesExist(privKeyFile)){
+            //Secret Tests
+            keyDataOut.setText("Checking Secrets...");
+            String LoginToken = new String(readFile(new File(fileDir, "LoginToken"),false));
+            byte[] base64Dec = Crypt.b64Dec(LoginToken);
+                /*
+                String secretText = new String(Crypt.aesDecrypt(Crypt.b64Dec(LoginToken),me.getSecret()));
+                if(secretText.matches("DecodeToken")){ }
+                */
+
+            keyDataOut.setText("Reading...");
+            byte[] PrivB64KData = readFile(privKeyFile,false);
+            byte[] base64Decode = Crypt.b64Dec(new String(PrivB64KData));
+            keyDataOut.setText("Reading BlockSize: "+base64Decode.length+ " - "+new String(base64Decode));
+
+            //byte[] DecryptedPrivKey = Crypt.aesDecrypt(base64Decode, me.getSecret());
+            //keyDataOut.setText("Decrypting: "+new String(DecryptedPrivKey));
+
+
+            //String Identifier = Crypt.md5(PrivKData.toString());
+            //String PubKData = fc.readFromFile(pubKeyFile);
+            //todo: check the privKey, Decrypt with AES, if it contains the PGP Header it is success,
+            // Store it, otherwise prompt password retry
+        }
+        else {
+            keyDataOut.setText("Writing...");
+            PGPKeyRingGenerator krgen = null;
+            String publicKey = "NULL Key", privateKey = "NULL Key";
+            try {
+                krgen = Pgp.generateKeyRingGenerator(me.getHashedPass().toCharArray());
+                publicKey = Pgp.genPGPPublicKey(krgen);
+                privateKey = Pgp.genPGPPrivKey(krgen);
+            }
+            catch (PGPException e) { e.printStackTrace(); }
+            catch (IOException e) { e.printStackTrace(); }
+
+
+            //Todo: Figure out a password Oriented Encoding /Decoding method to replace AES
+            //byte[] EncryptedPrivKey = Crypt.aesEncrypt(privateKey.getBytes(),me.getSecret());
+            //Reminder: The encryption is fine and the Decryption Works fine
+            //It isn't until we attempt to store and retrieve that we have
+            // these padding errors - Likely an encoding issue
+            //W/System.err: javax.crypto.IllegalBlockSizeException: error:1e00007b:Cipher functions:OPENSSL_internal:WRONG_FINAL_BLOCK_LENGTH
+
+            //fc.writeFile(fileDir, "private.key", false, EncryptedPrivKey);
+
+            //byte[] DecryptKey = Crypt.aesDecrypt(EncryptedPrivKey,me.getSecret());
+            //keyDataOut.setText("Key Data has been Encrypted and Wrote - Decode: "+ new String(DecryptKey));
+
+
+            //HEX TESTS
+                /*
+                String Hex = Crypt.str2Hex(new String(EncryptedPrivKey));
+                keyDataOut.setText("Key Data has been Encrypted and Wrote - Hex Conversion: "+Hex);
+                String nonHex = Crypt.hexToStr(Hex);
+                keyDataOut.setText("Key Data has been Encrypted and Wrote - Hex to AES: "+nonHex);
+                EncryptedPrivKey = Crypt.aesDecrypt(nonHex.getBytes(),me.getSecret());
+                keyDataOut.setText("Key Data has been Encrypted and Wrote - Decrypting: "+new String(" "+EncryptedPrivKey));
+                */
+
+            //BASE64 Tests
+            byte[] base64Encode = Crypt.b64Enc(privateKey.getBytes());
+            keyDataOut.setText("Key Data has been Encrypted and Wrote - B64 Encode: "+new String(base64Encode));
+            byte[] base64Decode = Crypt.b64Dec(new String(base64Encode));
+            //keyDataOut.setText("Key Data has been Encrypted and Wrote - B64 Decode: "+new String(base64Decode));
+            //byte[] EncryptKey = Crypt.aesDecrypt(base64Decode,me.getSecret());
+            keyDataOut.setText("Decrypted "+base64Decode.length+" Bytes: "+ new String(base64Decode));
+
+
+            //Running attempts at Base64 Storage now
+            //fc.writeFile(fileDir, "privateb64Decode.key", false, base64Decode);
+            //fc.writeFile(fileDir, "privOpen.key", false, EncryptKey);
+
+            //The BASE64 Encode of Private Key Is what we use the others above are just for debugging
+            writeFile(fileDir, "private.key", false, base64Encode);
+
+
+            //Special token locked with AES Secret, it gets Decoded with passcode and content checked on logins
+            byte[] DecodeLoginToken = Crypt.b64Enc(Crypt.aesEncrypt("DecodeToken".getBytes(),me.getSecret()));
+            writeFile(fileDir, "LoginToken", false, DecodeLoginToken);
+
+
+
+            //Write the Keys
+            //fc.writeFile(fileDir, "public.key", false, publicKey.getBytes());
+            //Create User and save to Database
+        } //This should only have to be called once.

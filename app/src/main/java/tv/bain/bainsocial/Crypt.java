@@ -1,19 +1,26 @@
 package tv.bain.bainsocial;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+
 public class Crypt {
+    private ICallback cb;
     //Todo: Add AES based PGP Private Key Storage Option For backup purposes
+    Crypt(ICallback cb){ this.cb = cb; };
     public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
@@ -64,42 +71,79 @@ public class Crypt {
         return new String(bytes);
     }
     //Part of the AES Security
+
     public static SecretKey generateSecret(String passPhrase) {
-        SecretKey secret = new SecretKeySpec(passPhrase.getBytes(), "AES");
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+
+        KeySpec spec = new PBEKeySpec(passPhrase.toCharArray(), salt, 65536, 256); // AES-256
+        SecretKeyFactory f = null;
+        try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
+        catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
+        byte[] key = new byte[0];
+        try { key = f.generateSecret(spec).getEncoded(); }
+        catch (InvalidKeySpecException e) { e.printStackTrace(); }
+
+        SecretKey secret = new SecretKeySpec(key, "AES");
         return secret;
     }
-    public static byte[] aesEncrypt(String message, SecretKey secret) {
-        /* Encrypt the message. */
-        Cipher cipher = null;
-        try { cipher = Cipher.getInstance("AES/ECB/PKCS5Padding"); }
+    public void generateSecret(ICallback cb, String passPhrase) {
+        new Thread(() -> {
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+
+            KeySpec spec = new PBEKeySpec(passPhrase.toCharArray(), salt, 65536, 256); // AES-256
+            SecretKeyFactory f = null;
+            try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
+            catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
+            byte[] key = new byte[0];
+            try { key = f.generateSecret(spec).getEncoded(); }
+            catch (InvalidKeySpecException e) { e.printStackTrace(); }
+
+            SecretKey secret = new SecretKeySpec(key, "AES");
+            cb.loginSecretCallback(secret);
+        }).start();
+    }
+
+    public static byte[] aesEncrypt(byte[] data, SecretKey secret) {
+        byte[] cipherText = new byte[0];
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secret);
+            cipherText = cipher.doFinal(data);
+        }
         catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
         catch (NoSuchPaddingException e) { e.printStackTrace(); }
-
-        try { cipher.init(Cipher.ENCRYPT_MODE, secret); }
         catch (InvalidKeyException e) { e.printStackTrace(); }
-
-        byte[] cipherText = new byte[0];
-        try { cipherText = cipher.doFinal(message.getBytes("UTF-8")); }
         catch (BadPaddingException e) { e.printStackTrace(); }
         catch (IllegalBlockSizeException e) { e.printStackTrace(); }
-        catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+
         return cipherText;
     }
-    public static String aesDecrypt(byte[] cipherText, SecretKey secret) {
-        /* Decrypt the message, given derived encContentValues and initialization vector. */
-        Cipher cipher = null;
-        try { cipher = Cipher.getInstance("AES/ECB/PKCS5Padding"); }
+    public static byte[] aesDecrypt(byte[] cipherText, SecretKey secret) {
+        byte[] decryptString = new byte[0];
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secret);
+            decryptString = cipher.doFinal(cipherText);
+        }
         catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
         catch (NoSuchPaddingException e) { e.printStackTrace(); }
-
-        try { cipher.init(Cipher.DECRYPT_MODE, secret); }
         catch (InvalidKeyException e) { e.printStackTrace(); }
-
-        String decryptString = null;
-        try { decryptString = new String(cipher.doFinal(cipherText), "UTF-8"); }
-        catch (UnsupportedEncodingException e) { e.printStackTrace(); }
         catch (BadPaddingException e) { e.printStackTrace(); }
         catch (IllegalBlockSizeException e) { e.printStackTrace(); }
+
         return decryptString;
     }
+
+    public static byte[] b64Enc(byte[] bytes){
+        return org.apache.commons.codec.binary.Base64.encodeBase64(bytes);
+    }
+    public static byte[] b64Dec(String b64){
+        return  org.apache.commons.codec.binary.Base64.decodeBase64(b64);
+    }
+
+
 }

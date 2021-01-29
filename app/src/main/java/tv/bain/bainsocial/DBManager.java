@@ -7,25 +7,52 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import javax.crypto.SecretKey;
+
 public class DBManager {
     private DatabaseHelper dbHelper;
     private Context context;
     private SQLiteDatabase database;
-    public DBManager(Context c) { context = c; }
+    private ICallback callbackActivity;
+
+    public DBManager(Context c) { context = c;}
+    public DBManager(Context c,ICallback callbackActivity) { context = c; this.callbackActivity = callbackActivity;}
     public DBManager open() throws SQLException {
         dbHelper = new DatabaseHelper(context);
         database = dbHelper.getWritableDatabase();
         return this;
     }
     public void close() { dbHelper.close(); }
+    boolean isEmptyString(String string) {
+        return string == null || string.isEmpty();
+    }
+
     public void getMyKeyData(User me) {
         Cursor cursor = database.query(dbHelper.KEY_TABLE_NAME, new String[] { dbHelper.ID, dbHelper.PRIV_KEY, dbHelper.PUB_KEY }, null,
                 null, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
-        me.setIdentifier(cursor.getString(0));
-        me.setPrivateKey(Crypt.aesDecrypt(cursor.getString(1).getBytes(), me.getSecret()));
-        me.setPublicKey(cursor.getString(2));
+        if(!isEmptyString(cursor.getString(0))) me.setIdentifier(cursor.getString(0));
+        if(!isEmptyString(cursor.getString(1))) me.setPrivateKey(new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), me.getSecret())));
+        if(!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
     }
+    public void getMyKeyData(ICallback cb, User me, SecretKey secret){
+        String decryptedPrivateKey = "No Key Found";
+        Cursor cursor = database.query(dbHelper.KEY_TABLE_NAME, new String[] { dbHelper.ID, dbHelper.PRIV_KEY, dbHelper.PUB_KEY }, null,
+                null, null, null, null, null);
+        if (cursor != null) cursor.moveToFirst();
+        if(cursor.getCount() > 0) {
+            if (!isEmptyString(cursor.getString(0))) me.setIdentifier(cursor.getString(0));
+            if (!isEmptyString(cursor.getString(1))) {
+                decryptedPrivateKey = new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), secret));
+                me.setPrivateKey(decryptedPrivateKey);
+                cb.loginKeyDBCallback(cursor.getCount());
+                //cb.loginKeyDBCallback(decryptedPrivateKey);
+            }
+            if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
+        }
+        else cb.loginKeyDBCallback(cursor.getCount());
+    }
+
     public void postMYKeyData(String Identifier, String privKey, String pubKey) {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DatabaseHelper.ID, Identifier);
