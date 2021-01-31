@@ -1,4 +1,4 @@
-package tv.bain.bainsocial;
+package tv.bain.bainsocial.backend;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,16 +15,23 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import tv.bain.bainsocial.ICallback;
+import tv.bain.bainsocial.LoginActivity;
+import tv.bain.bainsocial.datatypes.User;
+
 public class FileControls {
-    MainActivity main;
+    private ICallback cb;
+    public void setCallback(ICallback cb) { this.cb = cb; }
+    public ICallback getCallback() { return cb; }
+
+    LoginActivity main;
     private User me;
     private Context context;
 
     private String KeyDataDirectory;
     private File fileDir,privKeyFile,pubKeyFile;
 
-    FileControls(MainActivity main, Context context){
-        this.main = main; this.context = context;
+    public FileControls(Context context){
         KeyDataDirectory =  "/key_data/";
         fileDir = new File(context.getFilesDir(), KeyDataDirectory);
         privKeyFile = new File(fileDir, "private.key");
@@ -97,7 +104,7 @@ public class FileControls {
 
         keyDataOut.setText("Reading BlockSize: "+privateKey.length+ " - "+new String(privateKey));
         if(dbStore){
-            DBManager db = main.getDb();
+            //DBManager db = main.getDb();
             // TODO: 1/28/2021 Store Newly Generated Keys into the DB Return true
             return true;
         }

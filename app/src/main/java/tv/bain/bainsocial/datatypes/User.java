@@ -1,8 +1,14 @@
-package tv.bain.bainsocial;
+package tv.bain.bainsocial.datatypes;
 
 import javax.crypto.SecretKey;
 
+import tv.bain.bainsocial.ICallback;
+
 public class User {
+    private ICallback cb;
+    public void setCallback(ICallback cb) { this.cb = cb; }
+    public ICallback getCallback() { return cb; }
+
     private String hashedPass;
     public void setHashedPass(String hashedPass) { this.hashedPass = hashedPass; }
     public String getHashedPass(){ return hashedPass; }
@@ -14,7 +20,7 @@ public class User {
     private String DisplayName;
     private ICallback CallbackActivity;
 
-    User(ICallback CallbackActivity) { this.CallbackActivity = CallbackActivity; }
+    public User() {}
     public void setCallbackActivity(ICallback CallbackActivity) { this.CallbackActivity = CallbackActivity; }
 
     public void setSecret(SecretKey secret) { this.secret = secret; }

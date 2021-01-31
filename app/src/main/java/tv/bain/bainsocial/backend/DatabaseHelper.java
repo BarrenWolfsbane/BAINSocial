@@ -1,8 +1,16 @@
-package tv.bain.bainsocial;
+package tv.bain.bainsocial.backend;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import tv.bain.bainsocial.ICallback;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private ICallback cb;
+    public void setCallback(ICallback cb) { this.cb = cb; }
+    public ICallback getCallback() { return cb; }
+
     static final int DB_VERSION = 1;
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

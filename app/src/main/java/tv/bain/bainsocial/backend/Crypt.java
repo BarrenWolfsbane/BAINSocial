@@ -1,4 +1,4 @@
-package tv.bain.bainsocial;
+package tv.bain.bainsocial.backend;
 
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -16,11 +16,16 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import tv.bain.bainsocial.ICallback;
+
 
 public class Crypt {
     private ICallback cb;
+    public void setCallback(ICallback cb) { this.cb = cb; }
+    public ICallback getCallback() { return cb; }
+
     //Todo: Add AES based PGP Private Key Storage Option For backup purposes
-    Crypt(ICallback cb){ this.cb = cb; };
+    public Crypt(){};
     public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
@@ -88,7 +93,7 @@ public class Crypt {
         SecretKey secret = new SecretKeySpec(key, "AES");
         return secret;
     }
-    public void generateSecret(ICallback cb, String passPhrase) {
+    public static void generateSecret(ICallback cb, String passPhrase) {
         new Thread(() -> {
             SecureRandom random = new SecureRandom();
             byte[] salt = new byte[16];

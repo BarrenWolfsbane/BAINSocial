@@ -1,4 +1,4 @@
-package tv.bain.bainsocial;
+package tv.bain.bainsocial.backend;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import javax.crypto.SecretKey;
+
+import tv.bain.bainsocial.ICallback;
+import tv.bain.bainsocial.datatypes.User;
 
 public class DBManager {
     private DatabaseHelper dbHelper;
