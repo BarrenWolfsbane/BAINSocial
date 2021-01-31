@@ -1,25 +1,48 @@
 package tv.bain.bainsocial.fragments;
 
-import androidx.lifecycle.ViewModelProvider;
-
+import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import tv.bain.bainsocial.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import tv.bain.bainsocial.backend.Crypt;
+import tv.bain.bainsocial.backend.DBManager;
+import tv.bain.bainsocial.backend.FileControls;
 import tv.bain.bainsocial.databinding.ServerChoiceFragmentBinding;
+import tv.bain.bainsocial.datatypes.User;
 import tv.bain.bainsocial.viewmodels.ServerChoiceViewModel;
 
 public class ServerChoiceFrag extends Fragment {
 
     private ServerChoiceViewModel mViewModel;
     private ServerChoiceFragmentBinding b;
+    private Context context;
+    private Crypt crypt;
+    String CurrentLayout = "";
+
+    private User me;
+
+    public User getMe() {
+        return me;
+    }
+
+    private DBManager db;
+
+    public DBManager getDb() {
+        return db;
+    }
+
+    private FileControls fc;
+
+    public FileControls getFc() {
+        return fc;
+    }
 
     public static ServerChoiceFrag newInstance() {
         return new ServerChoiceFrag();
@@ -40,6 +63,7 @@ public class ServerChoiceFrag extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ServerChoiceViewModel.class);
+        context = requireActivity().getApplicationContext();
     }
 
 }
