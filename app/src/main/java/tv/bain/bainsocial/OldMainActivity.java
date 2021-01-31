@@ -185,14 +185,14 @@ public class OldMainActivity extends AppCompatActivity implements ICallback {
     }
 
     public void LoadLoginScreen() {
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.login_fragment);
         CurrentLayout = "R.layout.login_activity";
         Switch useBlockchain = findViewById(R.id.loginLayoutSwitch);
         useBlockchain.setChecked(false);
         useBlockchain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                LinearLayout CryptoOptions = findViewById(R.id.CryptoRecovery);
-                LinearLayout NormalOptions = findViewById(R.id.DeviceLogin);
+                LinearLayout CryptoOptions = findViewById(R.id.cryptoRecoveryLayout);
+                LinearLayout NormalOptions = findViewById(R.id.deviceLoginLayout);
                 if (isChecked) {
                     NormalOptions.setVisibility(View.GONE);
                     CryptoOptions.setVisibility(View.VISIBLE);

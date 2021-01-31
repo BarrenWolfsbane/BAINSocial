@@ -34,13 +34,13 @@
             android:layout_marginLeft="4dp"
             android:text="REQUIRED \n    These Permissions are necessary for the app to function"
             android:textColor="#0DE4FF"
-            app:layout_constraintBottom_toTopOf="@+id/ReqPermLayoutContainer"
+            app:layout_constraintBottom_toTopOf="@+id/reqPermLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/permissionLabel"
             app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
-            android:id="@+id/ReqPermLayoutContainer"
+            android:id="@+id/reqPermLayout"
             android:layout_width="417dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -149,7 +149,7 @@
             android:text="REQUIRED \n    These Permissions are optional and add functionality"
             android:textColor="#0DE4FF"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ReqPermLayoutContainer" />
+            app:layout_constraintTop_toBottomOf="@+id/reqPermLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
