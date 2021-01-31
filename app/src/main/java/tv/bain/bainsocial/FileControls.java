@@ -16,14 +16,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileControls {
-    MainActivity main;
+    OldMainActivity main;
     private User me;
     private Context context;
 
     private String KeyDataDirectory;
     private File fileDir,privKeyFile,pubKeyFile;
 
-    FileControls(MainActivity main, Context context){
+    FileControls(OldMainActivity main, Context context){
         this.main = main; this.context = context;
         KeyDataDirectory =  "/key_data/";
         fileDir = new File(context.getFilesDir(), KeyDataDirectory);
