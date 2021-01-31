@@ -1,4 +1,4 @@
-package tv.bain.bainsocial.fragments;
+package tv.bain.bainsocial.viewmodels;
 
 import androidx.lifecycle.ViewModel;
 

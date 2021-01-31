@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import tv.bain.bainsocial.ICallback;
-import tv.bain.bainsocial.LoginActivity;
 import tv.bain.bainsocial.datatypes.User;
 
 public class FileControls {
@@ -24,7 +23,6 @@ public class FileControls {
     public void setCallback(ICallback cb) { this.cb = cb; }
     public ICallback getCallback() { return cb; }
 
-    LoginActivity main;
     private User me;
     private Context context;
 

@@ -8,11 +8,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import tv.bain.bainsocial.backend.BAINServer;
 
 public class ServerBootActivity extends AppCompatActivity {
+
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.login_process);
         super.onCreate(savedInstanceState);
-        Intent service = new Intent(this, BAINServer.class); //this service will handle all important information
-        if(!BAINServer.isInstanceCreated()) startService(service);
-        else startActivity(new Intent(this, LoginActivity.class));
+        setContentView(R.layout.server_booting_fragment);
+        startService();
+        goToPermissionsFrag();
     }
+
+    private void startService() {
+        Intent service = new Intent(this, BAINServer.class); //This service will handle all important information
+        if (!BAINServer.isInstanceCreated()) startService(service);
+    }
+
+    private void goToPermissionsFrag() {
+        //TODO: go to permissions frag
+    }
+
 }

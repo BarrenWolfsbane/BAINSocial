@@ -112,12 +112,12 @@
         android:layout_marginBottom="8dp"
         android:text="@string/WaiverLabel"
         android:textColor="#13DEF8"
-        app:layout_constraintBottom_toTopOf="@+id/agreeAndContinue"
+        app:layout_constraintBottom_toTopOf="@+id/agree_and_continue_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/agreeAndContinue"
+        android:id="@+id/agree_and_continue_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
