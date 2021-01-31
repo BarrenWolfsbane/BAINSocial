@@ -2,6 +2,7 @@ package tv.bain.bainsocial.backend;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -9,6 +10,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -20,6 +22,7 @@ import androidx.core.app.NotificationCompat;
 import java.util.ArrayList;
 
 import tv.bain.bainsocial.LoginActivity;
+import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.datatypes.User;
 
 @SuppressLint("SetTextI18n")
@@ -63,12 +66,12 @@ public class BAINServer extends Service {
     @Override public void onCreate(){
         super.onCreate();
         instance = this;
-        //CreateNotification(R.drawable.bainsocialscreen3, "ICAN Services", "Running in Background, Click to Access App");
+        //CreateNotification(R.drawable.ic_launcher_foreground, "BAIN Services", "Running in Background, Click to Access App");
         BAINServer.getInstance().setContext(getBaseContext());
         BAINServer.getInstance().setDB(new DBManager(getBaseContext()));
         BAINServer.getInstance().setFC(new FileControls(context));
         BAINServer.getInstance().setUser(new User());
-
+        createNotificationChannel();
     }
     @Override public int onStartCommand(Intent intent, int flags, int startId){
         // The service is starting, due to a call to startService()
@@ -86,6 +89,8 @@ public class BAINServer extends Service {
             // Toast.makeText(this, "Loading Email:" + email, Toast.LENGTH_SHORT).show();
             //User.findUser(this, getEmail()); //load the user object into the app
         }
+        CreateNotification(R.drawable.ic_launcher_foreground, "BAIN Services", "Running in Background, Click to Access App","");
+        SendToast("Ding");
         Intent i = new Intent(this, LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
@@ -99,15 +104,43 @@ public class BAINServer extends Service {
     /////////////////////
     ///NOTICE  PORTION///
     /////////////////////
+    private static final String CHANNEL_ID = "";
     private boolean isForeground = false;
-
-    public void CreateNotification(int icon, String title, String Text){
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+    public void CreateNotification(int icon, String title, String Text, String longText){
         int notifyID = 1;
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(icon)
-                        .setContentTitle(title)
-                        .setContentText(Text);
+        NotificationCompat.Builder mBuilder;
+        if(longText.isEmpty()){
+            mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(icon)
+                    .setContentTitle(title)
+                    .setContentText(Text)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        }
+        else {
+            mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(icon)
+                    .setContentTitle(title)
+                    .setContentText(Text)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(longText))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        }
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, LoginActivity.class); //must be the main activity as defined in Manifest
 
@@ -126,14 +159,11 @@ public class BAINServer extends Service {
 
         // mId allows you to update the notification later on.
         if(isForeground) { mNotificationManager.notify(notifyID, mBuilder.build()); }
-        else {
-            startForeground(notifyID, mBuilder.build());
-            isForeground = true;
-        }
+        else { startForeground(notifyID, mBuilder.build()); isForeground = true; }
     }
 
 
-    public void SendToast(String msg){ Toast.makeText(this, msg, Toast.LENGTH_LONG).show(); }
+    public void SendToast(String msg){ Toast.makeText(context, msg, Toast.LENGTH_LONG).show(); }
     /*public void SendDataSMS(String phoneNumber, byte[] smsBody, short port){
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendDataMessage(phoneNumber, null, port, smsBody, null, null);

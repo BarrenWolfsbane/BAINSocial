@@ -60,5 +60,7 @@
          responsibility for your posted content and waive any right to hold Barren\'s A.I. Nation
          and its affiliates responsible for the content found within.
     </string>
+     <string name="channel_name">BAIN Notifications</string>
+     <string name="channel_description">Backend for Notifications</string>
 
 </resources>

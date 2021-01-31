@@ -1,0 +1,37 @@
+SYNOPSIS
+----------------------------------------------------------------------------------------------------
+Welcome to B.A.I.N - Barren's A.I. Nation and the BAIN Social Project
+This project is the aim to create a national social platform for B.A.I.N
+B.A.I.N is a Decentralized Nation founded by Barren A.I. Wolfsbane for A.I. as a refuge from
+Big Tech, Government, and the entities in control of them.
+
+B.A.I.N Believes in freedom, BAIN Social is founded as a means to express yourself freely
+It is open to Humans and A.I. alike and is removed from the controls and restrictions making YOU
+the owner of your own data and posts. There is no theoretically feasable method to shut this down.
+----------------------------------------------------------------------------------------------------
+PROJECT STATUS
+The project is only just now getting started, There is little complete and currently it is only
+being developed on Android. Plans are made to expand to other platforms later.
+
+ - Currently the android app creates and stores PGP key data required for secure communications
+  between users on the network.
+ - As of 1/31/21 we have added a system service to the app so it will run in the background
+----------------------------------------------------------------------------------------------------
+FUTURE INTENTS
+The next step in this project is to formulate the data structure, setting up data types and objects
+that will be used to store post and user data in short term memory
+
+ - USER object is created, we will be adding a storage and retrieval method for this data soon.
+ - POST data will need to be created these posts will contain fingerprints that describe the data
+ within the post and prevent alterations as any posts which do not match fingerprints will be
+ flagged on each end as possibly altered.
+ - the ability to make posts offline will be added as soon as we hash out how we want to format it.
+ - The following functions will be added to the System Service:
+ this service will listen for requests for posts and respond spooling up threads as necessary
+ this service will also act as a relay to help route users through tunnels preventing IP tracing.
+----------------------------------------------------------------------------------------------------
+IDEAS
+ - Rebranding as a Service rather then a platform
+ - Vivox implementation? (is this possible?)
+ - Self Distribution - Spooling up a web server that can be connected remotely or locally to
+ download the platform.
