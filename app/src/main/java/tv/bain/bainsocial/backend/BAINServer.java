@@ -1,6 +1,5 @@
 package tv.bain.bainsocial.backend;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,7 +25,6 @@ import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.datatypes.User;
 import tv.bain.bainsocial.fragments.ServerChoiceFrag;
 
-@SuppressLint("SetTextI18n")
 public class BAINServer extends Service {
     private static BAINServer instance = null; //we use this to call on functions here
 
@@ -136,9 +134,6 @@ public class BAINServer extends Service {
         }
         CreateNotification(R.drawable.ic_launcher_foreground, "BAIN Services", "Running in Background, Click to Access App", "");
         SendToast("Ding");
-        Intent i = new Intent(this, MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
         return mStartMode;
     }
 
