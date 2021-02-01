@@ -1,68 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <RelativeLayout
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
-        android:layout_margin = "16dp"
-        tools:context = ".MainActivity">
-        <EditText
-            android:id = "@+id/etIP"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:hint = "IP-Address"
-            android:inputType = "text" />
-        <EditText
-            android:id = "@+id/etPort"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_below = "@+id/etIP"
-            android:hint = "Port No"
-            android:inputType = "number" />
-        <Button
-            android:id = "@+id/btnConnect"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_below = "@+id/etPort"
-            android:layout_gravity = "center"
-            android:layout_marginTop = "16dp"
-            android:text = "Connect To Server" />
-        <TextView
-            android:id = "@+id/tvMessages"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_above = "@+id/etMessage"
-            android:layout_below = "@+id/btnConnect"
-            android:inputType = "textMultiLine"
-            android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
-        <EditText
-            android:id = "@+id/etMessage"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_above = "@+id/btnSend"
-            android:hint = "Enter Message"
-            android:inputType = "text" />
-        <Button
-            android:id = "@+id/btnSend"
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            android:layout_alignParentBottom = "true"
-            android:text = "SEND" />
 
-        <Button
-            android:id="@+id/changeBtn"
-            android:layout_width="123dp"
-            android:layout_height="61dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="-1dp"
-            android:layout_marginRight="-1dp"
-            android:text="SERVER" />
-
-    </RelativeLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav" />
+</FrameLayout>
