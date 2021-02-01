@@ -1,22 +1,22 @@
 package tv.bain.bainsocial.fragments;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
+
+import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.databinding.PermissionsFragmentBinding;
 import tv.bain.bainsocial.viewmodels.PermissionsViewModel;
 
@@ -26,6 +26,9 @@ public class PermissionsFrag extends Fragment {
 
     private PermissionsViewModel vm;
     private PermissionsFragmentBinding b = null;
+
+    //TODO: Permissions managing should be handled in a separate class
+    //TODO: Disable/Enable buttons according to permissions
 
 
     @Override
@@ -46,10 +49,8 @@ public class PermissionsFrag extends Fragment {
         vm = new ViewModelProvider(this).get(PermissionsViewModel.class);
         setOnClickListeners();
 
-        if (hasPermissions()) {
-            Toast.makeText(requireActivity(), "Proceeded successfully", Toast.LENGTH_SHORT).show();
-            //TODO: go to Login
-        } else askForPermissions();
+        if (hasPermissions()) goToLogin();
+        else askForPermissions();
 
     }
 
@@ -57,6 +58,10 @@ public class PermissionsFrag extends Fragment {
     public void onDestroyView() {
         b = null;
         super.onDestroyView();
+    }
+
+    private void goToLogin() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_permissionsFrag_to_loginFrag);
     }
 
     private boolean hasPermissions() {
@@ -74,14 +79,15 @@ public class PermissionsFrag extends Fragment {
 
     private void setOnClickListeners() {
         b.extStoragePermBtn.setOnClickListener(v -> {
-            askForPermissions();
+            if (hasPermissions())
+                Toast.makeText(requireActivity(), "Permission already granted", Toast.LENGTH_SHORT).show();
+            else askForPermissions();
         });
         b.agreeAndContinueBtn.setOnClickListener(v -> {
-            if (hasPermissions()) {
-                Toast.makeText(requireActivity(), "Proceeded successfully", Toast.LENGTH_SHORT).show();
-                //TODO: go to login
-            } else
+            if (hasPermissions()) goToLogin();
+            else {
                 Toast.makeText(requireActivity(), "Please provide all required permissions to proceed", Toast.LENGTH_SHORT).show();
+            }
         });
 
     }

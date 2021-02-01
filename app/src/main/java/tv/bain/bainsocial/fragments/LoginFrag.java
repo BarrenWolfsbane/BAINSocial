@@ -1,17 +1,17 @@
 package tv.bain.bainsocial.fragments;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
+
+import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.databinding.LoginFragmentBinding;
 import tv.bain.bainsocial.viewmodels.LoginViewModel;
 
@@ -55,15 +55,22 @@ public class LoginFrag extends Fragment {
 
     private void loginWithPassphrase() {
         String loginType = "Login Type - Local Passphrase";
-        String LoginPass = b.loginPassPhraseEdit.getText().toString();
-        String LoginRepeat = b.loginPassPhraseRepeatEdit.getText().toString();
-        if (LoginPass.isEmpty() || LoginRepeat.isEmpty())
+        String loginPass = b.loginPassPhraseEdit.getText().toString();
+        String loginRepeat = b.loginPassPhraseRepeatEdit.getText().toString();
+        if (loginPass.isEmpty() || loginRepeat.isEmpty())
             b.loginErrorTxt.setText("Neither the Passphrase not the check may be Empty");
-        else if (!LoginPass.matches(LoginRepeat))
+        else if (!loginPass.matches(loginRepeat))
             b.loginErrorTxt.setText("Both the Passphrase and the Check must match");
-        else {
-            //TODO: go to LoginProcess fragment
-        }
+        else goToLoginProcess(loginType, loginPass);
+
+    }
+
+    private void goToLoginProcess(String loginType, String loginPass) {
+        Bundle bundle = new Bundle();
+        bundle.putString("loginType", loginType);
+        bundle.putString("loginPass", loginPass);
+
+        NavHostFragment.findNavController(this).navigate(R.id.action_loginFrag_to_loginProcessFrag, bundle);
     }
 
     private void setOnClickListeners() {

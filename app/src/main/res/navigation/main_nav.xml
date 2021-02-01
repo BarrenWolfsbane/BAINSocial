@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_nav">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/serverBootingFrag">
 
+    <fragment
+        android:id="@+id/serverBootingFrag"
+        android:name="tv.bain.bainsocial.fragments.ServerBootingFrag"
+        android:label="ServerBootingFrag"
+        tools:layout="@layout/server_booting_fragment">
+        <action
+            android:id="@+id/action_serverBootingFrag_to_permissionsFrag"
+            app:destination="@id/permissionsFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/permissionsFrag"
+        android:name="tv.bain.bainsocial.fragments.PermissionsFrag"
+        android:label="PermissionsFrag"
+        tools:layout="@layout/permissions_fragment">
+        <action
+            android:id="@+id/action_permissionsFrag_to_loginFrag"
+            app:destination="@id/loginFrag"
+            app:popUpTo="@id/serverBootingFrag"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFrag"
+        android:name="tv.bain.bainsocial.fragments.LoginFrag"
+        android:label="LoginFrag"
+        tools:layout="@layout/login_fragment">
+        <action
+            android:id="@+id/action_loginFrag_to_loginProcessFrag"
+            app:destination="@id/loginProcessFrag"
+            app:popUpTo="@id/loginFrag" />
+        <argument
+            android:name="loginType"
+            app:argType="string" />
+        <argument
+            android:name="loginPass"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginProcessFrag"
+        android:name="tv.bain.bainsocial.fragments.LoginProcessFrag"
+        android:label="LoginProcessFrag"
+        tools:layout="@layout/login_process_fragment">
+        <action
+            android:id="@+id/action_loginProcessFrag_to_serverChoiceFrag"
+            app:destination="@id/serverChoiceFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/serverChoiceFrag"
+        android:name="tv.bain.bainsocial.fragments.ServerChoiceFrag"
+        android:label="ServerChoiceFrag"
+        tools:layout="@layout/server_choice_fragment" />
 </navigation>
