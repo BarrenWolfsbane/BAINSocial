@@ -14,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import java.io.File;
-
 import javax.crypto.SecretKey;
 
 import tv.bain.bainsocial.ICallback;
@@ -99,7 +97,7 @@ public class LoginProcessFrag extends Fragment implements ICallback {
 
     public boolean checkLoginToken(TextView keyDataOut) { //ensures the password produces the same
         String KeyDataDirectory = "/key_data/";
-        File fileDir = new File(BAINServer.getInstance().getContext().getFilesDir(), KeyDataDirectory);
+        //File fileDir = new File(BAINServer.getInstance().getContext().getFilesDir(), KeyDataDirectory);
         keyDataOut.setText("Checking Secrets...");
         // byte[] base64Dec = fc.readFile(new File(fileDir, "LoginToken"),true);
         return true;
