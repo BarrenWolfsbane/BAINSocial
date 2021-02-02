@@ -37,7 +37,6 @@ public class NotificationMan {
         // or other notification behaviors after this
         NotificationManager notificationManager = ctx.getSystemService(android.app.NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
-        createNotification(ctx, R.drawable.bainsocialscreen3, "BATATA", "Title", null);
     }
 
     public static void createNotification(Context ctx, @DrawableRes int icon, String title, String text) {
