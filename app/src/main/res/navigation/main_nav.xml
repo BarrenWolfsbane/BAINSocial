@@ -60,4 +60,10 @@
         android:name="tv.bain.bainsocial.fragments.ServerChoiceFrag"
         android:label="ServerChoiceFrag"
         tools:layout="@layout/server_choice_fragment" />
+
+    <fragment
+        android:id="@+id/postCreateFrag"
+        android:name="tv.bain.bainsocial.fragments.PostCreateFrag"
+        android:label="PostCreateFrag"
+        tools:layout="@layout/create_post" />
 </navigation>
