@@ -45,7 +45,7 @@ public class DBManager {
         Cursor cursor = database.query(dbHelper.KEY_TABLE_NAME, new String[]{dbHelper.ID, dbHelper.PRIV_KEY, dbHelper.PUB_KEY}, null,
                 null, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
-        if (!isEmptyString(cursor.getString(0))) me.setIdentifier(cursor.getString(0));
+        if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
         if (!isEmptyString(cursor.getString(1)))
             me.setPrivateKey(new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), me.getSecret())));
         if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
@@ -57,7 +57,7 @@ public class DBManager {
                 null, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
         if (cursor.getCount() > 0) {
-            if (!isEmptyString(cursor.getString(0))) me.setIdentifier(cursor.getString(0));
+            if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
             if (!isEmptyString(cursor.getString(1))) {
                 decryptedPrivateKey = new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), secret));
                 me.setPrivateKey(decryptedPrivateKey);

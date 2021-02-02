@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import tv.bain.bainsocial.backend.Crypt;
 import tv.bain.bainsocial.backend.DBManager;
-import tv.bain.bainsocial.backend.FileControls;
 import tv.bain.bainsocial.databinding.ServerChoiceFragmentBinding;
 import tv.bain.bainsocial.datatypes.User;
 import tv.bain.bainsocial.viewmodels.ServerChoiceViewModel;
@@ -36,12 +35,6 @@ public class ServerChoiceFrag extends Fragment {
 
     public DBManager getDb() {
         return db;
-    }
-
-    private FileControls fc;
-
-    public FileControls getFc() {
-        return fc;
     }
 
     public static ServerChoiceFrag newInstance() {
