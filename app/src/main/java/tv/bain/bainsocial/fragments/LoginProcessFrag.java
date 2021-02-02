@@ -52,6 +52,12 @@ public class LoginProcessFrag extends Fragment implements ICallback {
         login(loginType, loginPass);
     }
 
+    @Override
+    public void onDestroyView() {
+        b = null;
+        super.onDestroyView();
+    }
+
     public void login(String loginType, String loginPass) {
         String hashedPass = Crypt.md5(loginPass);
         BAINServer.getInstance().getUser().setHashedPass(hashedPass);
