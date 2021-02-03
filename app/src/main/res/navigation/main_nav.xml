@@ -51,7 +51,7 @@
         tools:layout="@layout/login_process_fragment">
         <action
             android:id="@+id/action_loginProcessFrag_to_serverChoiceFrag"
-            app:destination="@id/serverChoiceFrag"
+            app:destination="@id/postCreateFrag"
             app:popUpTo="@id/loginProcessFrag"
             app:popUpToInclusive="true" />
     </fragment>
@@ -65,5 +65,5 @@
         android:id="@+id/postCreateFrag"
         android:name="tv.bain.bainsocial.fragments.PostCreateFrag"
         android:label="PostCreateFrag"
-        tools:layout="@layout/create_post" />
+        tools:layout="@layout/post_create_fragment" />
 </navigation>

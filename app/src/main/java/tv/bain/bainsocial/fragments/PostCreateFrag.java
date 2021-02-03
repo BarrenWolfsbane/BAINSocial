@@ -28,6 +28,7 @@ public class PostCreateFrag extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setOnClickListeners();
         mViewModel = new ViewModelProvider(this).get(PostCreateViewModel.class);
     }
 
@@ -35,6 +36,17 @@ public class PostCreateFrag extends Fragment {
         b = PostCreateFragmentBinding.inflate(getLayoutInflater(), container, false);
         return b.getRoot();
     }
+    private void setOnClickListeners() {
+        b.setTags.setOnClickListener(v -> {
 
+        });
+        b.submitPost.setOnClickListener(v -> {
+
+        });
+        b.openImageSelect.setOnClickListener(v -> {
+
+        });
+
+    }
 
 }

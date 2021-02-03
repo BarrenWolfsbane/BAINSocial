@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/postingAsTag"
         android:layout_width="388dp"
         android:layout_height="24dp"
         android:text="Posting As:"
