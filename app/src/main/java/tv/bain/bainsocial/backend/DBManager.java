@@ -16,15 +16,13 @@ public class DBManager {
     private DatabaseHelper dbHelper;
     private Context context;
     private SQLiteDatabase database;
-    private ICallback callbackActivity;
 
     public DBManager(Context c) {
         context = c;
     }
 
-    public DBManager(Context c, ICallback callbackActivity) {
+    public DBManager(Context c, ICallback callback) {
         context = c;
-        this.callbackActivity = callbackActivity;
     }
 
     public DBManager open() throws SQLException {
@@ -42,7 +40,7 @@ public class DBManager {
     }
 
     public void getMyKeyData(User me) {
-        Cursor cursor = database.query(dbHelper.KEY_TABLE_NAME, new String[]{dbHelper.ID, dbHelper.PRIV_KEY, dbHelper.PUB_KEY}, null,
+        Cursor cursor = database.query(DatabaseHelper.KEY_TABLE_NAME, new String[]{DatabaseHelper.ID, DatabaseHelper.PRIV_KEY, DatabaseHelper.PUB_KEY}, null,
                 null, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
         if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
@@ -53,7 +51,7 @@ public class DBManager {
 
     public void getMyKeyData(ICallback cb, User me, SecretKey secret) {
         String decryptedPrivateKey = "No Key Found";
-        Cursor cursor = database.query(dbHelper.KEY_TABLE_NAME, new String[]{dbHelper.ID, dbHelper.PRIV_KEY, dbHelper.PUB_KEY}, null,
+        Cursor cursor = database.query(DatabaseHelper.KEY_TABLE_NAME, new String[]{DatabaseHelper.ID, DatabaseHelper.PRIV_KEY, DatabaseHelper.PUB_KEY}, null,
                 null, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
         if (cursor.getCount() > 0) {
@@ -66,6 +64,7 @@ public class DBManager {
             }
             if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
         } else cb.loginKeyDBCallback(cursor.getCount());
+        cursor.close();
     }
 
     public void postMYKeyData(String Identifier, String privKey, String pubKey) {
