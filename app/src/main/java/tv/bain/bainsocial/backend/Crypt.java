@@ -37,14 +37,14 @@ public class Crypt {
             MessageDigest digest = java.security.MessageDigest
                     .getInstance(MD5);
             digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigestByteArray = digest.digest();
 
             // Create Hex String
             StringBuilder hexString = new StringBuilder();
-            for (byte aMessageDigest : messageDigest) {
-                String h = Integer.toHexString(0xFF & aMessageDigest);
+            for (byte mDigest : messageDigestByteArray) {
+                StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & mDigest));
                 while (h.length() < 2)
-                    h = "0" + h;
+                    h.insert(0, "0");
                 hexString.append(h);
             }
             return hexString.toString();
@@ -57,13 +57,13 @@ public class Crypt {
 
     public static String str2Hex(String bin) {
         char[] digital = "0123456789ABCDEF".toCharArray();
-        StringBuffer sb = new StringBuffer("");
+        StringBuilder sb = new StringBuilder("");
         byte[] bs = bin.getBytes();
         int bit;
-        for (int i = 0; i < bs.length; i++) {
-            bit = (bs[i] & 0x0f0) >> 4;
+        for (byte b : bs) {
+            bit = (b & 0x0f0) >> 4;
             sb.append(digital[bit]);
-            bit = bs[i] & 0x0f;
+            bit = b & 0x0f;
             sb.append(digital[bit]);
         }
         return sb.toString();
@@ -89,16 +89,11 @@ public class Crypt {
         random.nextBytes(salt);
 
         KeySpec spec = new PBEKeySpec(passPhrase.toCharArray(), salt, 65536, 256); // AES-256
-        SecretKeyFactory f = null;
-        try {
-            f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
         byte[] key = new byte[0];
         try {
+            SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             key = f.generateSecret(spec).getEncoded();
-        } catch (InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
 
@@ -112,16 +107,11 @@ public class Crypt {
             random.nextBytes(salt);
 
             KeySpec spec = new PBEKeySpec(passPhrase.toCharArray(), salt, 65536, 256); // AES-256
-            SecretKeyFactory f = null;
-            try {
-                f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
             byte[] key = new byte[0];
             try {
+                SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
                 key = f.generateSecret(spec).getEncoded();
-            } catch (InvalidKeySpecException e) {
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
             }
 
