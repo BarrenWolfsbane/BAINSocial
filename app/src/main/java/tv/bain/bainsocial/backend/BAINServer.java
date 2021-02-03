@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.datatypes.User;
-import tv.bain.bainsocial.fragments.ServerChoiceFrag;
 
 public class BAINServer extends Service {
 
@@ -63,8 +62,8 @@ public class BAINServer extends Service {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BAINServer.getInstance().setDB(new DBManager(getBaseContext()));
-        BAINServer.getInstance().setFC(new FileControls(new ServerChoiceFrag(), getApplicationContext()));
+        BAINServer.getInstance().setDB(new DBManager(getApplicationContext()));
+        BAINServer.getInstance().setFC(new FileControls(getApplicationContext()));
         BAINServer.getInstance().setUser(new User());
         NotificationMan.initiate(getApplicationContext());
     }

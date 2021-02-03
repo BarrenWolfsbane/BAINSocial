@@ -27,6 +27,7 @@ public class LoginFrag extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         return initiateDataBinder(container);
     }
 
@@ -44,6 +45,7 @@ public class LoginFrag extends Fragment {
     }
 
     private void bindData() {
+        b.setLifecycleOwner(getViewLifecycleOwner());
         b.setViewModel(vm);
         b.setFrag(this);
     }

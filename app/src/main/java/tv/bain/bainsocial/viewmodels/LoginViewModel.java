@@ -25,7 +25,7 @@ public class LoginViewModel extends ViewModel {
 
     //region Setters and Setters
     public String getLoginType() {
-        return loginTypeSwitch.getValue() ? PASSPHRASE_LOGIN_TYPE : BLOCKCHAIN_LOGIN_TYPE;
+        return loginTypeSwitch.getValue() ? BLOCKCHAIN_LOGIN_TYPE : PASSPHRASE_LOGIN_TYPE;
     }
 
     public String getLoginPass() {
