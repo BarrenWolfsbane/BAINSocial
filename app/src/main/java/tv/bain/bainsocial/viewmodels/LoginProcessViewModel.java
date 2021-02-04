@@ -57,7 +57,6 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
 
     @Override
     public void loginSecretCallback(SecretKey secret) {
-//        b.stepOneLoginProgressTxt.setTextColor(Color.parseColor("#FF00FB97"));
         stepOneProgress.postValue("Complete");
         BAINServer.getInstance().getUser().setSecret(secret);
 
