@@ -44,18 +44,25 @@ public class DBManager {
     public void getMyKeyData(User me) {
         Cursor cursor = database.query(DatabaseHelper.U_TABLE_NAME, new String[]{DatabaseHelper.U_ID, DatabaseHelper.U_PRIV_KEY, DatabaseHelper.U_PUB_KEY}, null,
                 null, null, null, null, null);
-        if (cursor != null) cursor.moveToFirst();
+
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return;
+        }
+
         if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
         if (!isEmptyString(cursor.getString(1)))
             me.setPrivateKey(new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), me.getSecret())));
         if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
+
+        cursor.close();
     }
 
     public void getMyKeyData(ICallback cb, User me, SecretKey secret) {
         String decryptedPrivateKey = "No Key Found";
         Cursor cursor = database.query(DatabaseHelper.U_TABLE_NAME, new String[]{DatabaseHelper.U_ID, DatabaseHelper.U_PRIV_KEY, DatabaseHelper.U_PUB_KEY}, null,
                 null, null, null, null, null);
-        if (cursor != null) cursor.moveToFirst();
+
         if (cursor.getCount() > 0) {
             if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
             if (!isEmptyString(cursor.getString(1))) {
@@ -107,13 +114,15 @@ public class DBManager {
         database.delete(DatabaseHelper.P_TABLE_NAME, DatabaseHelper.P_ID + "=" + _id, null);
     }
 
-    public void insert_Post(Post post){
+    public void insert_Post(Post post) {
 
     }
-    public Post get_Post(String pID){
+
+    public Post get_Post(String pID) {
         return null;
     }
-    public void insert_User(User user){
+
+    public void insert_User(User user) {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DatabaseHelper.U_ID, user.getuID());
         contentValue.put(DatabaseHelper.U_HANDLE, user.getDisplayName());
@@ -123,7 +132,8 @@ public class DBManager {
         //contentValue.put(DatabaseHelper.U_SECRET, Secret); //we can store AES here later
         database.insert(DatabaseHelper.U_TABLE_NAME, null, contentValue);
     }
-    public void insert_User(User user, String Secret){
+
+    public void insert_User(User user, String Secret) {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DatabaseHelper.U_ID, user.getuID());
         contentValue.put(DatabaseHelper.U_HANDLE, user.getDisplayName());
@@ -133,27 +143,29 @@ public class DBManager {
         contentValue.put(DatabaseHelper.U_SECRET, Secret);
         database.insert(DatabaseHelper.U_TABLE_NAME, null, contentValue);
     }
-    public User get_User(String uID){
+
+    public User get_User(String uID) {
         return null;
     }
-    public User get_User_By_Hash(ICallback cb,String hash){
+
+    public User get_User_By_Hash(ICallback cb, String hash) {
         User thisUser = null;
         Cursor res = database.query(
-            DatabaseHelper.U_TABLE_NAME,
-            new String[]{
-                    DatabaseHelper.U_ID,
-                    DatabaseHelper.U_HANDLE,
-                    DatabaseHelper.U_PUB_KEY,
-                    DatabaseHelper.U_PRIV_KEY,
-                    DatabaseHelper.U_IS_FOLLOW
-            },
-            DatabaseHelper.U_SECRET+" = ?", //Where Clause
-            new String[] { hash },
-            null,
-            null,
-            null,
-            null);
-        if(res.moveToFirst()) {
+                DatabaseHelper.U_TABLE_NAME,
+                new String[]{
+                        DatabaseHelper.U_ID,
+                        DatabaseHelper.U_HANDLE,
+                        DatabaseHelper.U_PUB_KEY,
+                        DatabaseHelper.U_PRIV_KEY,
+                        DatabaseHelper.U_IS_FOLLOW
+                },
+                DatabaseHelper.U_SECRET + " = ?", //Where Clause
+                new String[]{hash},
+                null,
+                null,
+                null,
+                null);
+        if (res.moveToFirst()) {
             do {
                 String uID = res.getString(res.getColumnIndex(DatabaseHelper.U_ID));
                 String uHandle = res.getString(res.getColumnIndex(DatabaseHelper.U_HANDLE));
@@ -161,18 +173,17 @@ public class DBManager {
                 String uPrivKey = res.getString(res.getColumnIndex(DatabaseHelper.U_PRIV_KEY));
                 Boolean uIsFollow = (res.getInt(res.getColumnIndex(DatabaseHelper.U_IS_FOLLOW)) == 1);
 
-                thisUser = new User(uID, uHandle,uIsFollow,uPubKey);
+                thisUser = new User(uID, uHandle, uIsFollow, uPubKey);
                 thisUser.setPrivateKey(uPrivKey);
 
-                Toast.makeText(context, "UserNum:"+uID, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
             } while (res.moveToNext());
             //cb.loginHashCallback();
             cb.loginKeyDBCallback(res.getCount());
-        }
-        else {
+        } else {
             cb.loginKeyDBCallback(0);
             //cb.loginHashCallback();
-           // Toast.makeText(context, "No Results in database "+this.getDatabaseName()+", Load from web instead", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(context, "No Results in database "+this.getDatabaseName()+", Load from web instead", Toast.LENGTH_SHORT).show();
             //if this is a first time user then the information wont be available in the database so we would instead create a new user
         }
         res.close(); //cursors need to be closed to prevent memory leaks
