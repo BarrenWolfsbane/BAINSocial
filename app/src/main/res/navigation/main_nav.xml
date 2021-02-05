@@ -36,7 +36,7 @@
             android:id="@+id/action_loginFrag_to_loginProcessFrag"
             app:destination="@id/loginProcessFrag"
             app:popUpTo="@id/loginFrag"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
         <argument
             android:name="loginType"
             app:argType="string" />
@@ -50,16 +50,11 @@
         android:label="LoginProcessFrag"
         tools:layout="@layout/login_process_fragment">
         <action
-            android:id="@+id/action_loginProcessFrag_to_serverChoiceFrag"
+            android:id="@+id/action_loginProcessFrag_to_postCreateFrag"
             app:destination="@id/postCreateFrag"
-            app:popUpTo="@id/loginProcessFrag"
+            app:popUpTo="@id/loginFrag"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-        android:id="@+id/serverChoiceFrag"
-        android:name="tv.bain.bainsocial.fragments.ServerChoiceFrag"
-        android:label="ServerChoiceFrag"
-        tools:layout="@layout/server_choice_fragment" />
 
     <fragment
         android:id="@+id/postCreateFrag"

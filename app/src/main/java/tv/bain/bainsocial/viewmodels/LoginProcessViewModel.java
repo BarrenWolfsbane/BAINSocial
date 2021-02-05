@@ -51,14 +51,16 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
 
         stepOneProgress.postValue("Hash: " + hashedPass);
         BAINServer.getInstance().getDb().open();
-        BAINServer.getInstance().getDb().get_User_By_Hash(this, hashedPass);
+        BAINServer.getInstance().getDb().get_User_By_Hash(this, hashedPass); /* Sends back to loginKeyCallback */
         BAINServer.getInstance().getDb().close();
     }
+
     @Override
     public void loginHashCallback(int count) {
-        if(BAINServer.getInstance().getUser().getuID() == null) stepOneProgress.postValue("User Not Found");
+        if (BAINServer.getInstance().getUser().getuID() == null) stepOneProgress.postValue("User Not Found");
         else stepOneProgress.postValue("Complete");
     }
+
     @Override
     public void loginKeyDBCallback(int count) {
         if (count > 0) { //This means that the Passphrase turned up a data entry
@@ -71,7 +73,7 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
             if (!keyFileExists()) {
                 if (createKeyFiles()) state.postValue(new MyState.FINISHED());
             } else if (canLoadKeyFiles()) {
-                //ToDo: we need to take these key files and create a new user in DB for them.
+                //TODO: we need to take these key files and create a new user in DB for them.
                 // if they are not in existence yet, if they exit already pass back an error
                 if (checkLoginToken()) {
                     state.postValue(new MyState.FINISHED());

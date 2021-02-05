@@ -1,9 +1,11 @@
 package tv.bain.bainsocial.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +19,6 @@ import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.LoginProcessViewModel;
 
 public class LoginProcessFrag extends Fragment {
-
-    //TODO: Manage the login process in the ViewModel instead of the Fragment class
 
     private LoginProcessViewModel vm;
     private LoginProcessFragmentBinding b;
@@ -55,7 +55,14 @@ public class LoginProcessFrag extends Fragment {
         // Observes the switch changes and behaves accordingly
         vm.getState().observe(getViewLifecycleOwner(), myState -> {
             if (myState instanceof MyState.FINISHED) goToServerChoice();
-            else if (myState instanceof MyState.ERROR) goBackToLogin();
+            else if (myState instanceof MyState.ERROR) {
+                Toast.makeText(requireActivity(), ((MyState.ERROR) myState).getMsg(), Toast.LENGTH_SHORT).show();
+//                goBackToLogin();
+            }
+        });
+        vm.getStepOneProgress().observe(getViewLifecycleOwner(), st -> {
+            if (st.equals("Complete"))
+                b.stepOneLoginProgressTxt.setTextColor(Color.parseColor("#FF00FB97"));
         });
     }
 
@@ -66,7 +73,7 @@ public class LoginProcessFrag extends Fragment {
     }
 
     private void goToServerChoice() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_serverChoiceFrag);
+        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_postCreateFrag);
     }
 
     private void goBackToLogin() {
