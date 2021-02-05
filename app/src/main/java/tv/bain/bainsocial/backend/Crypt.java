@@ -116,7 +116,6 @@ public class Crypt {
             }
 
             SecretKey secret = new SecretKeySpec(key, "AES");
-            cb.loginSecretCallback(secret);
         }).start();
     }
 

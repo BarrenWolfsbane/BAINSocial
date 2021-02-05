@@ -1,0 +1,4 @@
+We are looking at a multi user setup in near future.
+Preparing for it right now with the database setup
+We will have to change the login screen in future to allow selection
+This is how we will handle a case where there are two private keys in a system.

@@ -68,12 +68,12 @@
             app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
         <TextView
-            android:id="@+id/txtView"
+            android:id="@+id/stepOneLoginProgressLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="4dp"
-            android:text="Generating Secrets:"
+            android:text="Passphrase Handling:"
             android:textColor="#00BCD4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginProcessTypeLabel" />
@@ -88,19 +88,19 @@
             android:textColor="#CDDC39"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.561"
-            app:layout_constraintStart_toEndOf="@+id/txtView"
-            app:layout_constraintTop_toTopOf="@+id/txtView"
+            app:layout_constraintStart_toEndOf="@+id/stepOneLoginProgressLabel"
+            app:layout_constraintTop_toTopOf="@+id/stepOneLoginProgressLabel"
             tools:text="In progress" />
 
         <TextView
-            android:id="@+id/txtView2"
+            android:id="@+id/stepTwoLoginProgressLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Checking For Keys:"
             android:textColor="#00BCD4"
-            app:layout_constraintStart_toStartOf="@+id/txtView"
-            app:layout_constraintTop_toBottomOf="@+id/txtView" />
+            app:layout_constraintStart_toStartOf="@+id/stepOneLoginProgressLabel"
+            app:layout_constraintTop_toBottomOf="@+id/stepOneLoginProgressLabel" />
 
         <TextView
             android:id="@+id/stepTwoLoginProgressTxt"
@@ -111,7 +111,7 @@
             android:textColor="#CDDC39"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/stepOneLoginProgressTxt"
-            app:layout_constraintTop_toTopOf="@+id/txtView2"
+            app:layout_constraintTop_toTopOf="@+id/stepTwoLoginProgressLabel"
             tools:text="In progress" />
 
         <TextView
@@ -127,7 +127,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtView2" />
+            app:layout_constraintTop_toBottomOf="@+id/stepTwoLoginProgressLabel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

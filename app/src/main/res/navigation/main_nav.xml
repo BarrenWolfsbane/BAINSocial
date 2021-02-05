@@ -51,7 +51,7 @@
         tools:layout="@layout/login_process_fragment">
         <action
             android:id="@+id/action_loginProcessFrag_to_serverChoiceFrag"
-            app:destination="@id/serverChoiceFrag"
+            app:destination="@id/postCreateFrag"
             app:popUpTo="@id/loginProcessFrag"
             app:popUpToInclusive="true" />
     </fragment>

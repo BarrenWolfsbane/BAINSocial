@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editTextTextMultiLine"
+        android:id="@+id/postEntryField"
         android:layout_width="409dp"
         android:layout_height="634dp"
         android:layout_marginTop="4dp"
@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/postingAsTag"
         android:layout_width="388dp"
         android:layout_height="24dp"
         android:text="Posting As:"
@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@+id/openImageSelect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine"
+        app:layout_constraintTop_toBottomOf="@+id/postEntryField"
         app:layout_constraintVertical_bias="0.523" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

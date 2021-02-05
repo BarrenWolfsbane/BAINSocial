@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.PostCreateFragmentBinding;
 import tv.bain.bainsocial.viewmodels.PostCreateViewModel;
 
@@ -28,6 +29,7 @@ public class PostCreateFrag extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setOnClickListeners();
         mViewModel = new ViewModelProvider(this).get(PostCreateViewModel.class);
     }
 
@@ -36,5 +38,20 @@ public class PostCreateFrag extends Fragment {
         return b.getRoot();
     }
 
+    private void setOnClickListeners() {
+        b.setTags.setOnClickListener(v -> {
+
+        });
+        b.submitPost.setOnClickListener(v -> {
+            String authorData = BAINServer.getInstance().getUser().getuID();
+            String postData = b.postEntryField.getText().toString();
+            BAINServer.getInstance().getDb().open();
+
+            BAINServer.getInstance().getDb().close();
+        });
+        b.openImageSelect.setOnClickListener(v -> {
+
+        });
+    }
 
 }

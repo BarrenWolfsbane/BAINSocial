@@ -3,8 +3,6 @@ package tv.bain.bainsocial.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import javax.crypto.SecretKey;
-
 import tv.bain.bainsocial.ICallback;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.backend.Crypt;
@@ -51,32 +49,30 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
         String hashedPass = Crypt.md5(loginPass);
         BAINServer.getInstance().getUser().setHashedPass(hashedPass);
 
-        stepTwoProgress.postValue("Hash:" + hashedPass);
-        Crypt.generateSecret(this, hashedPass); //Sends back to loginSecretCallback(SecretKey secret)
-    }
-
-    @Override
-    public void loginSecretCallback(SecretKey secret) {
-        stepOneProgress.postValue("Complete");
-        BAINServer.getInstance().getUser().setSecret(secret);
-
+        stepOneProgress.postValue("Hash: " + hashedPass);
         BAINServer.getInstance().getDb().open();
-        BAINServer.getInstance().getDb().getMyKeyData(this, BAINServer.getInstance().getUser(), secret); //Sends back to loginKeyDBCallback(int count)
+        BAINServer.getInstance().getDb().get_User_By_Hash(this, hashedPass);
         BAINServer.getInstance().getDb().close();
     }
-
+    @Override
+    public void loginHashCallback(int count) {
+        if(BAINServer.getInstance().getUser().getuID() == null) stepOneProgress.postValue("User Not Found");
+        else stepOneProgress.postValue("Complete");
+    }
     @Override
     public void loginKeyDBCallback(int count) {
-        if (count > 0) {
+        if (count > 0) { //This means that the Passphrase turned up a data entry
             stepTwoProgress.postValue("Keys found");
             if (checkLoginToken()) state.postValue(new MyState.FINISHED());
             else state.postValue(new MyState.ERROR());
-        } else {
+        } else { //Passphrase did not show up in database
             stepTwoProgress.postValue("DB Entry Not Found");
             //TODO: If Database entry not found we check for files. and create User from it if we find it
             if (!keyFileExists()) {
                 if (createKeyFiles()) state.postValue(new MyState.FINISHED());
             } else if (canLoadKeyFiles()) {
+                //ToDo: we need to take these key files and create a new user in DB for them.
+                // if they are not in existence yet, if they exit already pass back an error
                 if (checkLoginToken()) {
                     state.postValue(new MyState.FINISHED());
                 } else state.postValue(new MyState.ERROR("Login token check failed"));
