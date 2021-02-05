@@ -82,10 +82,15 @@ public class FileControls {
             return false;
         }
 
-        byte[] LoginToken = Crypt.aesEncrypt("DecodeToken".getBytes(), me.getSecret());
         writeFile(fileDir, "private.key", true, privateKey.getBytes());
         writeFile(fileDir, "public.key", false, publicKey.getBytes());
-        writeFile(fileDir, "LoginToken", true, LoginToken);
+
+        me.setuID(Crypt.md5(privateKey));
+        me.setIsFollowing(false);
+        me.setPrivateKey(privateKey);
+        me.setPublicKey(publicKey);
+        BAINServer.getInstance().getDb().insert_User(me,me.getHashedPass());
+
         return true;
     }
 

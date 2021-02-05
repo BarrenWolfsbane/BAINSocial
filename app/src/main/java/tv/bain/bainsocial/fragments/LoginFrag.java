@@ -76,7 +76,7 @@ public class LoginFrag extends Fragment {
     public void login() {
         try {
             boolean loginSucceeded = vm.login();
-            if (loginSucceeded) goToLoginProcessFrag(vm.getLoginType(), vm.getLoginType());
+            if (loginSucceeded) goToLoginProcessFrag(vm.getLoginType(), vm.getLoginPass());
         } catch (MyException e) {
             Toast.makeText(requireActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }

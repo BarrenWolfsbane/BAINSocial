@@ -3,12 +3,14 @@ package tv.bain.bainsocial.datatypes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import javax.crypto.SecretKey;
 
 import tv.bain.bainsocial.backend.BAINServer;
 
-public class User {
+public class User implements Serializable {
     public static ArrayList<User> usrList; //this array list is used to store User Objects.
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // The Following Variables are Exclusive to the logged in user and will never be pulled       //
@@ -49,15 +51,6 @@ public class User {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public User() {
-    }
-    public User(JSONObject object){
-        try {
-            this.uID = object.getString("uID");
-            this.DisplayName = object.getString("DisplayName");
-        } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
-    }
-
     private String uID; //Unique MD5 hash Identifying this user based on the Private Key.
     public void setuID(String uID) {
         this.uID = uID;
@@ -72,5 +65,27 @@ public class User {
     }
     public String getDisplayName() {
         return DisplayName;
+    }
+
+    private Boolean isFollowing;
+    public void setIsFollowing(Boolean isFollowing) { this.isFollowing = isFollowing; }
+    public Boolean getIsFollowing() { return isFollowing; }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    public User() {
+    }
+    public User(JSONObject object){
+        try {
+            this.uID = object.getString("uID");
+            this.DisplayName = object.getString("DisplayName");
+            this.isFollowing = object.getBoolean("isFollowing");
+            this.PublicKey = object.getString("PublicKey");
+        } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
+    }
+    public User(String uID, String DisplayName,Boolean isFollowing,String PublicKey) {
+        this.uID = uID;
+        this.DisplayName = DisplayName;
+        this.isFollowing = isFollowing;
+        this.PublicKey = PublicKey;
     }
 }

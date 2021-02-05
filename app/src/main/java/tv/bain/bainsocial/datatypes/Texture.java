@@ -10,12 +10,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import tv.bain.bainsocial.backend.BAINServer;
 
-public class Texture {
+public class Texture implements Serializable {
     private String UUID; //UUID is a HASH Value of the uploaded image
     public void setUUID(String UUID) {
         this.UUID = UUID;

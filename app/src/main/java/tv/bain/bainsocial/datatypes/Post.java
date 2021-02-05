@@ -1,5 +1,12 @@
 package tv.bain.bainsocial.datatypes;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
+import tv.bain.bainsocial.backend.BAINServer;
+
 /*
     When a post is started it boots up a Blank Post Object
     a Screen appears to compose a post, any images selected will be fingerprinted to a MD5 hash
@@ -13,7 +20,7 @@ package tv.bain.bainsocial.datatypes;
     The Image Data and the Text are combined, hashed and become an ID. for the post.
     This info is then stored in the DB, recalled when your page is visited.
  */
-public class Post {
+public class Post implements Serializable {
     private String[] blockChainTXN; // this array will contain any blockchain txns where this post can be found.
 
     public String[] getBlockChainTXN() {
@@ -97,4 +104,20 @@ public class Post {
     public String[] getResponseList() {
         return responseList;
     }
+
+    public Post(){
+    }
+    public Post(JSONObject object){
+        try {
+            this.pID = object.getString("pID");
+            this.uID = object.getString("uID");
+            this.pType = object.getInt("pType");
+            this.timeCreated = object.getLong("timeCreated");
+            this.replyTo = object.getString("replyTo");
+            this.text = object.getString("text");
+            this.antiTamper = object.getString("antiTamper");
+        } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
+    }
+
+
 }
