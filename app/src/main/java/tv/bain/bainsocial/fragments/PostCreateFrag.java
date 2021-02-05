@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +17,7 @@ import tv.bain.bainsocial.viewmodels.PostCreateViewModel;
 
 public class PostCreateFrag extends Fragment {
 
-    private PostCreateViewModel mViewModel;
+    private PostCreateViewModel vm;
     private PostCreateFragmentBinding b;
 
 
@@ -29,8 +30,8 @@ public class PostCreateFrag extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        vm = new ViewModelProvider(this).get(PostCreateViewModel.class);
         setOnClickListeners();
-        mViewModel = new ViewModelProvider(this).get(PostCreateViewModel.class);
     }
 
     private View initiateDataBinding(ViewGroup container) {
@@ -54,4 +55,9 @@ public class PostCreateFrag extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+    }
 }
