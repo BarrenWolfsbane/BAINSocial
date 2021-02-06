@@ -54,10 +54,10 @@ public class LoginProcessFrag extends Fragment {
     private void observeState() {
         // Observes the switch changes and behaves accordingly
         vm.getState().observe(getViewLifecycleOwner(), myState -> {
-            if (myState instanceof MyState.FINISHED) goToServerChoice();
+            if (myState instanceof MyState.FINISHED) goToHomeFrag();
             else if (myState instanceof MyState.ERROR) {
                 Toast.makeText(requireActivity(), ((MyState.ERROR) myState).getMsg(), Toast.LENGTH_SHORT).show();
-//                goBackToLogin();
+                goBackToLogin();
             }
         });
         vm.getStepOneProgress().observe(getViewLifecycleOwner(), st -> {
@@ -72,8 +72,8 @@ public class LoginProcessFrag extends Fragment {
         super.onDestroyView();
     }
 
-    private void goToServerChoice() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_postCreateFrag);
+    private void goToHomeFrag() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_homeFrag);
     }
 
     private void goBackToLogin() {
