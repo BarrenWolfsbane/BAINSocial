@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.crypto.SecretKey;
 
 import tv.bain.bainsocial.ICallback;
@@ -15,6 +18,7 @@ import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.User;
 
 public class DBManager {
+
     private DatabaseHelper dbHelper;
     private Context context;
     private SQLiteDatabase database;
@@ -96,10 +100,8 @@ public class DBManager {
     }
 
     public Cursor fetch() {
-        String[] columns = new String[]{DatabaseHelper.P_ID, DatabaseHelper.P_TITLE, DatabaseHelper.P_TEXT};
-        Cursor cursor = database.query(DatabaseHelper.P_TABLE_NAME, columns, null, null, null, null, null);
-        if (cursor != null) cursor.moveToFirst();
-        return cursor;
+        String[] columns = DatabaseHelper.P_COLUMNS_LIST;
+        return database.query(DatabaseHelper.P_TABLE_NAME, columns, null, null, null, null, null);
     }
 
     public int update(long _id, String name, String desc) {
@@ -115,12 +117,11 @@ public class DBManager {
     }
 
 
-
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
-        contentValue.put(DatabaseHelper.P_ID, post.getpID());
-        contentValue.put(DatabaseHelper.P_UID, post.getuID());
-        contentValue.put(DatabaseHelper.P_TYPE, post.getpType());
+        contentValue.put(DatabaseHelper.P_ID, post.getPid());
+        contentValue.put(DatabaseHelper.P_UID, post.getUid());
+        contentValue.put(DatabaseHelper.P_TYPE, post.getPostType());
         contentValue.put(DatabaseHelper.P_TIME, post.getTimeCreated());
         contentValue.put(DatabaseHelper.P_REPLYTO, post.getReplyTo());
         contentValue.put(DatabaseHelper.P_TEXT, post.getText());
@@ -132,8 +133,21 @@ public class DBManager {
         return null;
     }
 
-    public void get_Recent_Posts_Local(){
+    public List<Post> get_Recent_Posts_Local() {
+        Cursor cur = fetch();
+        ArrayList<Post> arr = new ArrayList<>();
 
+        if (!cur.moveToFirst()) return arr;
+
+        do {
+            Post post = new Post();
+            post.setText(cur.getString(5));
+            post.setTimeCreated(cur.getLong(6));
+            post.setUid(cur.getString(3));
+            arr.add(post);
+        } while (cur.moveToNext());
+
+        return arr;
     }
 
     public void insert_User(User user, String Secret) {

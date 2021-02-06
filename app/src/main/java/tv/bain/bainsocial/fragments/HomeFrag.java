@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import tv.bain.bainsocial.R;
+import tv.bain.bainsocial.adapters.PostsAdapter;
+import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
@@ -19,6 +21,7 @@ public class HomeFrag extends Fragment {
 
     private HomeViewModel vm;
     private HomeFragmentBinding b = null;
+    private PostsAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -39,8 +42,11 @@ public class HomeFrag extends Fragment {
     }
 
     private void bindData() {
+        initiateAdapter();
         b.setLifecycleOwner(getViewLifecycleOwner());
         b.setFrag(this);
+        b.recycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -48,6 +54,13 @@ public class HomeFrag extends Fragment {
         b = null;
         super.onDestroyView();
     }
+
+    private void initiateAdapter() {
+        BAINServer.getInstance().getDb().open();
+        adapter = new PostsAdapter(BAINServer.getInstance().getDb().get_Recent_Posts_Local());
+        BAINServer.getInstance().getDb().close();
+    }
+
 
     public void goToNewPostFrag() {
         NavHostFragment.findNavController(this).navigate(R.id.action_homeFrag_to_postCreateFrag);
