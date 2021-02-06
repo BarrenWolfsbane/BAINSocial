@@ -12,8 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.Crypt;
 import tv.bain.bainsocial.databinding.PostCreateFragmentBinding;
+import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.viewmodels.PostCreateViewModel;
+
+import static java.lang.System.currentTimeMillis;
 
 public class PostCreateFrag extends Fragment {
 
@@ -44,10 +48,21 @@ public class PostCreateFrag extends Fragment {
 
         });
         b.submitPost.setOnClickListener(v -> {
+            Post thisPost = new Post();
             String authorData = BAINServer.getInstance().getUser().getuID();
             String postData = b.postEntryField.getText().toString();
-            BAINServer.getInstance().getDb().open();
 
+            thisPost.setpType(Post.SHORT280);
+            thisPost.setuID(authorData);
+            thisPost.setText(postData);
+            thisPost.setTimeCreated(currentTimeMillis());
+            thisPost.setpID(Crypt.md5(thisPost.getText()));
+
+            //thisPost.setReplyTo();
+            //thisPost.setAntiTamper();
+
+            BAINServer.getInstance().getDb().open();
+            BAINServer.getInstance().getDb().insert_Post(thisPost);
             BAINServer.getInstance().getDb().close();
         });
         b.openImageSelect.setOnClickListener(v -> {

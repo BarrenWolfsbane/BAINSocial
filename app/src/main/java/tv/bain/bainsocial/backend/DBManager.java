@@ -114,23 +114,26 @@ public class DBManager {
         database.delete(DatabaseHelper.P_TABLE_NAME, DatabaseHelper.P_ID + "=" + _id, null);
     }
 
-    public void insert_Post(Post post) {
 
+
+    public void insert_Post(Post post) {
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(DatabaseHelper.P_ID, post.getpID());
+        contentValue.put(DatabaseHelper.P_UID, post.getuID());
+        contentValue.put(DatabaseHelper.P_TYPE, post.getpType());
+        contentValue.put(DatabaseHelper.P_TIME, post.getTimeCreated());
+        contentValue.put(DatabaseHelper.P_REPLYTO, post.getReplyTo());
+        contentValue.put(DatabaseHelper.P_TEXT, post.getText());
+        contentValue.put(DatabaseHelper.P_ANTITAMPER, post.getAntiTamper());
+        database.insert(DatabaseHelper.P_TABLE_NAME, null, contentValue);
     }
 
     public Post get_Post(String pID) {
         return null;
     }
 
-    public void insert_User(User user) {
-        ContentValues contentValue = new ContentValues();
-        contentValue.put(DatabaseHelper.U_ID, user.getuID());
-        contentValue.put(DatabaseHelper.U_HANDLE, user.getDisplayName());
-        contentValue.put(DatabaseHelper.U_PUB_KEY, user.getPublicKey());
-        contentValue.put(DatabaseHelper.U_PRIV_KEY, user.getPrivateKey());
-        contentValue.put(DatabaseHelper.U_IS_FOLLOW, user.getIsFollowing());
-        //contentValue.put(DatabaseHelper.U_SECRET, Secret); //we can store AES here later
-        database.insert(DatabaseHelper.U_TABLE_NAME, null, contentValue);
+    public void get_Recent_Posts_Local(){
+
     }
 
     public void insert_User(User user, String Secret) {
@@ -175,16 +178,12 @@ public class DBManager {
 
                 thisUser = new User(uID, uHandle, uIsFollow, uPubKey);
                 thisUser.setPrivateKey(uPrivKey);
-
                 Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
             } while (res.moveToNext());
-            //cb.loginHashCallback();
+            BAINServer.getInstance().setUser(thisUser); //Updates entire User with data pulled from DB
             cb.loginKeyDBCallback(res.getCount());
         } else {
             cb.loginKeyDBCallback(0);
-            //cb.loginHashCallback();
-            // Toast.makeText(context, "No Results in database "+this.getDatabaseName()+", Load from web instead", Toast.LENGTH_SHORT).show();
-            //if this is a first time user then the information wont be available in the database so we would instead create a new user
         }
         res.close(); //cursors need to be closed to prevent memory leaks
         return thisUser;

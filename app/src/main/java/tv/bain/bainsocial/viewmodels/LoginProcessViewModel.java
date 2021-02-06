@@ -65,7 +65,10 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
     public void loginKeyDBCallback(int count) {
         if (count > 0) { //This means that the Passphrase turned up a data entry
             stepTwoProgress.postValue("Keys found");
-            if (checkLoginToken()) state.postValue(new MyState.FINISHED());
+            if (checkLoginToken()) {
+                //We need to get the full user info Including the UID
+                state.postValue(new MyState.FINISHED());
+            }
             else state.postValue(new MyState.ERROR());
         } else { //Passphrase did not show up in database
             stepTwoProgress.postValue("DB Entry Not Found");
