@@ -50,8 +50,8 @@
         android:label="LoginProcessFrag"
         tools:layout="@layout/login_process_fragment">
         <action
-            android:id="@+id/action_loginProcessFrag_to_postCreateFrag"
-            app:destination="@id/postCreateFrag"
+            android:id="@+id/action_loginProcessFrag_to_homeFrag"
+            app:destination="@id/homeFrag"
             app:popUpTo="@id/loginFrag"
             app:popUpToInclusive="true" />
     </fragment>
@@ -61,4 +61,13 @@
         android:name="tv.bain.bainsocial.fragments.PostCreateFrag"
         android:label="PostCreateFrag"
         tools:layout="@layout/post_create_fragment" />
+    <fragment
+        android:id="@+id/homeFrag"
+        android:name="tv.bain.bainsocial.fragments.HomeFrag"
+        android:label="HomeFrag"
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_homeFrag_to_postCreateFrag"
+            app:destination="@id/postCreateFrag" />
+    </fragment>
 </navigation>
