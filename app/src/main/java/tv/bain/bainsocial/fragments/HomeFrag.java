@@ -13,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
-import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
@@ -30,6 +29,7 @@ public class HomeFrag extends Fragment {
     }
 
     private View initiateDataBinder(ViewGroup container) {
+        System.out.println("INITIATED");
         b = HomeFragmentBinding.inflate(getLayoutInflater(), container, false);
         return b.getRoot();
     }
@@ -56,9 +56,7 @@ public class HomeFrag extends Fragment {
     }
 
     private void initiateAdapter() {
-        BAINServer.getInstance().getDb().open();
-        adapter = new PostsAdapter(BAINServer.getInstance().getDb().get_Recent_Posts_Local());
-        BAINServer.getInstance().getDb().close();
+        adapter = new PostsAdapter(vm.getAllLocalPosts());
     }
 
 
