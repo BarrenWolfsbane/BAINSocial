@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-import tv.bain.bainsocial.backend.BAINServer;
-
 /*
     When a post is started it boots up a Blank Post Object
     a Screen appears to compose a post, any images selected will be fingerprinted to a MD5 hash
@@ -21,45 +19,71 @@ import tv.bain.bainsocial.backend.BAINServer;
     This info is then stored in the DB, recalled when your page is visited.
  */
 public class Post implements Serializable {
+
+    public static Integer SHORT280 = 0; //Text Limited to 280 characters Commonly used on Twitter.
+    private Integer postType; //Use STATIC Variables to assign a type
     private String[] blockChainTXN; // this array will contain any blockchain txns where this post can be found.
+    private String uid; //MD5 Of Author
+    private String pid; //Unique MD5 hash Identifying this post Based on the following criteria. Images+Text
+    private long timeCreated; // UTC time currentTimeMillis()
+    private String replyTo; // BAIN://uID:pID //the user and post this connects to
+    private String[] responseList; // {<uID:pID>} //User ID and Post ID
+    private String antiTamper; //a MD5 Hash recalculated every time there os a change in replies
+    private String text; //the message Text
+
+    public Post() {
+    }
+
+    public Post(JSONObject object) throws JSONException {
+        this.pid = object.getString("pID");
+        this.uid = object.getString("uID");
+        this.postType = object.getInt("pType");
+        this.timeCreated = object.getLong("timeCreated");
+        this.replyTo = object.getString("replyTo");
+        this.text = object.getString("text");
+        this.antiTamper = object.getString("antiTamper");
+    }
+
+    //region Getters and Setters
+    public static Integer getSHORT280() {
+        return SHORT280;
+    }
+
+    public static void setSHORT280(Integer SHORT280) {
+        Post.SHORT280 = SHORT280;
+    }
+
+    public Integer getPostType() {
+        return postType;
+    }
+
+    public void setPostType(Integer postType) {
+        this.postType = postType;
+    }
 
     public String[] getBlockChainTXN() {
         return blockChainTXN;
     }
 
-    public static Integer SHORT280 = 0; //Text Limited to 280 characters Commonly used on Twitter.
-
-    private Integer pType; //Use STATIC Variables to assign a type
-
-    public Integer getpType() {
-        return pType;
+    public void setBlockChainTXN(String[] blockChainTXN) {
+        this.blockChainTXN = blockChainTXN;
     }
 
-    public void setpType(Integer pType) {
-        this.pType = pType;
+    public String getUid() {
+        return uid;
     }
 
-    private String uID; //MD5 Of Author
-
-    public String getuID() {
-        return uID;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public void setuID(String uID) {
-        this.uID = uID;
+    public String getPid() {
+        return pid;
     }
 
-    private String pID; //Unique MD5 hash Identifying this post Based on the following criteria. Images+Text
-
-    public String getpID() {
-        return pID;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
-
-    public void setpID(String pID) {
-        this.pID = pID;
-    }
-
-    private long timeCreated; // UTC time currentTimeMillis()
 
     public long getTimeCreated() {
         return timeCreated;
@@ -69,8 +93,6 @@ public class Post implements Serializable {
         this.timeCreated = timeCreated;
     }
 
-    private String replyTo; // BAIN://uID:pID //the user and post this connects to
-
     public String getReplyTo() {
         return replyTo;
     }
@@ -79,17 +101,13 @@ public class Post implements Serializable {
         this.replyTo = replyTo;
     }
 
-    private String text; //the message Text
-
-    public String getText() {
-        return text;
+    public String[] getResponseList() {
+        return responseList;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setResponseList(String[] responseList) {
+        this.responseList = responseList;
     }
-
-    private String antiTamper; //a MD5 Hash recalculated every time there os a change in replies
 
     public String getAntiTamper() {
         return antiTamper;
@@ -99,25 +117,13 @@ public class Post implements Serializable {
         this.antiTamper = antiTamper;
     }
 
-    private String[] responseList; // {<uID:pID>} //User ID and Post ID
-
-    public String[] getResponseList() {
-        return responseList;
+    public String getText() {
+        return text;
     }
 
-    public Post(){
-    }
-    public Post(JSONObject object){
-        try {
-            this.pID = object.getString("pID");
-            this.uID = object.getString("uID");
-            this.pType = object.getInt("pType");
-            this.timeCreated = object.getLong("timeCreated");
-            this.replyTo = object.getString("replyTo");
-            this.text = object.getString("text");
-            this.antiTamper = object.getString("antiTamper");
-        } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
+    public void setText(String text) {
+        this.text = text;
     }
 
-
+    //endregion
 }
