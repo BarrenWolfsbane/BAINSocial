@@ -50,24 +50,15 @@
         android:label="LoginProcessFrag"
         tools:layout="@layout/login_process_fragment">
         <action
-            android:id="@+id/action_loginProcessFrag_to_homeFrag"
-            app:destination="@id/homeFrag"
+            android:id="@+id/action_loginProcessFrag_to_feedFrag"
+            app:destination="@id/feedFrag2"
             app:popUpTo="@id/loginFrag"
             app:popUpToInclusive="true" />
     </fragment>
-
     <fragment
-        android:id="@+id/postCreateFrag"
-        android:name="tv.bain.bainsocial.fragments.PostCreateFrag"
-        android:label="PostCreateFrag"
-        tools:layout="@layout/post_create_fragment" />
-    <fragment
-        android:id="@+id/homeFrag"
+        android:id="@+id/feedFrag2"
         android:name="tv.bain.bainsocial.fragments.HomeFrag"
-        android:label="HomeFrag"
-        tools:layout="@layout/home_fragment" >
-        <action
-            android:id="@+id/action_homeFrag_to_postCreateFrag"
-            app:destination="@id/postCreateFrag" />
-    </fragment>
+        android:label="FeedFrag"
+        tools:layout="@layout/home_fragment" />
+
 </navigation>
