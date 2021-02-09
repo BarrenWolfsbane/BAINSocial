@@ -1,0 +1,29 @@
+Comcast Blocked Ports
+Port	Transport	Protocol	Direction Downstream/ Upstream to CPE	Reason for Block	IP Version
+Port 0/TCP:	N/A	Downstream	Port 0 is a reserved port, which means it should not be used by applications. Network abuse has prompted the need to block this port.	IPv4/IPv6
+Port 25/TCP:	SMTP	Both	Port 25 is unsecured, and Botnet spammers can use it to send spam. This does not affect Xfinity Connect usage. We recommend learning more about configuring your email settings to Comcast email to use port 587.	IPv4/IPv6
+Port 67/UDP:	BOOTP, DHCP	Downstream	UDP Port 67, which is used to obtain dynamic Internet Protocol (IP) address information from our dynamic host configuration protocol (DHCP) server, is vulnerable to malicious hacks.	IPv4
+Port 135-139/TCP/UDP:	NetBios	Both	NetBios services allow file sharing over networks. When improperly configured, ports 135-139 can expose critical system files or give full file system access (run, delete, copy) to any malicious intruder connected to the network.	IPv4/IPv6
+Port 161/UDP:	SNMP	Both	SNMP is vulnerable to reflected amplification distributed denial of service (DDoS) attacks.	IPv4/IPv6
+Port 445/TCP:	MS-DS, SMB	Both	Port 445 is vulnerable to attacks, exploits and malware such as the Sasser and Nimda worms.	IPv4/IPv6
+Port 520/UDP:	RIP	Both	Port 520 is vulnerable to malicious route updates, which provides several attack possibilities.	IPv4
+Port 547/UDP:	DHCPv6	Downstream	UDP Port 547, which is used to obtain dynamic Internet Protocol (IP) address information from our dynamic host configuration protocol (DHCP) server, is vulnerable to malicious hacks.	IPv6
+Port 1080/TCP:	SOCKS	Downstream	Port 1080 is vulnerable to, among others, viruses, worms and DoS attacks.	IPv4/IPv6
+Port 1900/UDP:	SSDP	Both	Port 1900 is vulnerable to DoS attacks.	IPv4/IPv6
+
+AT&T Blocked Ports
+Port 0/TCP: Port 0 is a reserved port. This port should not be used for any applications. Blocking protects our customers from potentially harmful types of network abuses.
+Port 19/UDP: Port 19 Chargen is a protocol designed to generate a stream of characters for debugging and measurement. Because more recent tools have been developed for measurement and debugging purposes, blocking protects against use of this port in Reflective DDOS attacks.
+Port 25/TCP: Simple Mail Transport Protocol (SMTP) is used to send email. Port 25/TCP may be blocked from customers with dynamically-assigned Internet Protocol (IP) addresses to protect systems from becoming a mail relay for SPAM. Customers can subscribe to AT&T SMTP services if they need to host an SMTP server on the internet.
+Port 68/UDP: Port 68 is used to obtain dynamic IP address information from a dynamic host configuration protocol (DHCP) server. Port 68 may be blocked to eliminate the risk of exposure to a rogue DHCP server.
+Port 123/UDP: Network Time Protocol (NTP) is used to accurately synchronize computer time of day to a reference time server. Some aspects of Port 123 may be limited to minimize malicious use. Poorly-configured NTP servers can be used for Reflective DDOS attacks, and some devices provide NTP service inadvertently, which exacerbates the port’s malicious use.
+Port 135/TCP: NetBIOS is a network file sharing protocol and is also known as Common Internet File System or LanManager. Blocking protects customers from exposing files unintentionally, worms, and viruses.
+Port 139/TCP: NetBIOS is a network file sharing protocol and is also known as Common Internet File System or LanManager. Blocking protects customers from exposing critical system files unintentionally, which could give system access to a malicious actor.
+Port 445/TCP: NetBIOS is a network file sharing protocol and is also known as Common Internet File System or LanManager. Blocking mitigates a potential threat to certain operating systems. Similar to our blocking of Ports 135 and 139, blocking Port 445 protects customers from exposing files unintentionally, worms, and viruses.
+Port 520/UDP: RIPv1 - UDP port 520 is used by the Routing Information Protocol (RIP) to share network routing information. RIPv1 was designed to support route information sharing on small classful (class A, B, C, D) networks and has limited usefulness in today’s classless networks. Port 520 has been used by malicious actors to generate Reflective DDOS attacks.
+Port 1900/UDP: Universal Plug and Play (UPnP) is a protocol standard designed to allow device discovery over a local network. Some home routers may expose this port to the internet, which could allow attackers to defeat the security attributes of Network Address Translation (NAT) and allow attackers to use the port for Reflective DDOS attacks.
+Port 3479/TCP: Twrpc is a protocol used for remote management of end user devices. Blocking this port protects customers from improper use of the port, which can cause end user device instability.
+Port 7547/TCP: CPE WAN Management Protocol (CWMP) is a protocol used for remote management of end user devices. Blocking this port protects customers from improper use of the port, which can cause end user device instability.
+Port 49152/TCP, 49955/TCP, 50001/TCP, 51001-51003/TCP, 51010-51011/TCP, 51020/TCP: These ports are numbered from the dynamic/private ephemeral port range. Their use varies according to implementation and may include end-user device management. Blocking these ports protects customers from malicious activity, which may include data exposure or attacks against the end user devices.
+Port 61001/TCP: Internet Protocol Detail Record (IPDR) is a specification used to collect information from end user devices including device configuration data. Blocking TCP port 61001 prevents certain types of malicious activity including data exposure and end user device attacks.
+

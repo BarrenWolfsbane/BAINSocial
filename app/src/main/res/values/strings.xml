@@ -63,4 +63,17 @@
      <string name="channel_name">BAIN Notifications</string>
      <string name="channel_description">Backend for Notifications</string>
 
+
+     <string name="profile">Profile</string>
+     <string name="wallet">Wallet</string>
+     <string name="settings">Settings</string>
+
+     <string-array name="drawer_menu_array_list">
+          <item>@string/profile</item>
+          <item>@string/wallet</item>
+          <item>@string/settings</item>
+     </string-array>
+
+     <string name="drawer_open">Open</string>
+     <string name="drawer_close">Close</string>
 </resources>

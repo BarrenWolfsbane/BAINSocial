@@ -18,7 +18,6 @@ import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 public class HomeFrag extends Fragment {
-
     private HomeViewModel vm;
     private HomeFragmentBinding b = null;
     private PostsAdapter adapter;
@@ -39,6 +38,7 @@ public class HomeFrag extends Fragment {
         super.onActivityCreated(savedInstanceState);
         vm = new ViewModelProvider(this).get(HomeViewModel.class);
         bindData();
+
     }
 
     private void bindData() {
@@ -61,9 +61,7 @@ public class HomeFrag extends Fragment {
         BAINServer.getInstance().getDb().close();
     }
 
-
     public void goToNewPostFrag() {
         NavHostFragment.findNavController(this).navigate(R.id.action_homeFrag_to_postCreateFrag);
     }
-
 }
