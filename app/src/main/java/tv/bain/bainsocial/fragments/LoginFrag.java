@@ -19,7 +19,6 @@ import tv.bain.bainsocial.viewmodels.LoginViewModel;
 
 public class LoginFrag extends Fragment {
 
-    //TODO: Manage the login process in the ViewModel instead of the Fragment class
     private LoginViewModel vm;
     private LoginFragmentBinding b = null;
 

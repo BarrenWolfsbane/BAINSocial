@@ -73,7 +73,7 @@ public class LoginProcessFrag extends Fragment {
     }
 
     private void goToHomeFrag() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_homeFrag);
+        NavHostFragment.findNavController(this).navigate(R.id.action_loginProcessFrag_to_feedFrag);
     }
 
     private void goBackToLogin() {
