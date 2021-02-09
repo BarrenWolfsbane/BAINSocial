@@ -18,9 +18,7 @@
         <service
             android:name=".backend.BAINServer"
             android:foregroundServiceType="connectedDevice" />
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.BAINSocial">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

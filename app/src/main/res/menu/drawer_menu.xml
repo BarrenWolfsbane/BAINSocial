@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/feedFragItem"
+        android:id="@+id/homeFragItem"
         android:title="Feed" />
     <item
         android:id="@+id/postCreateFragItem"
