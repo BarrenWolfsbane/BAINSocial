@@ -43,10 +43,12 @@ public class PostCreateViewModel extends ViewModel {
         //thisPost.setReplyTo();
         //thisPost.setAntiTamper();
 
-        BAINServer.getInstance().getDb().open();
-        BAINServer.getInstance().getDb().insert_Post(thisPost);
-        BAINServer.getInstance().getDb().close();
-        state.postValue(new MyState.FINISHED());
+        if(!postDescription.trim().matches("")) {
+            BAINServer.getInstance().getDb().open();
+            BAINServer.getInstance().getDb().insert_Post(thisPost);
+            BAINServer.getInstance().getDb().close();
+            state.postValue(new MyState.FINISHED());
+        }
     }
 
     public void setIdleState() {

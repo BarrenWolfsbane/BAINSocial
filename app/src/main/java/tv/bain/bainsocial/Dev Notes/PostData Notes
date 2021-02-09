@@ -1,0 +1,16 @@
+To reduce the use of storage and data transmissions we will cache posts
+when we find post data we will access the database first to see if the post exists or not
+generally the post will not be stored unless it is
+a ReplyTo
+a Response
+a mention,
+a recently seen posts
+and saved posts
+to recently seen posts would be put into a temp cache
+that will be deleted after some time
+while the others can be stored in database.
+
+Fruit-Punch-SamuraiToday at 9:56 AM
+maybe show the user the post from cache, and if it is kinda old,
+ask him if it should be updated, or just let him decide how long
+ to store posts from parameters
