@@ -33,6 +33,7 @@
                 android:contentDescription="TODO"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc"
                 tools:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc" />
 
             <TextView
