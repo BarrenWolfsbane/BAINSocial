@@ -101,7 +101,15 @@ public class DBManager {
 
     public Cursor fetch() {
         String[] columns = DatabaseHelper.P_COLUMNS_LIST;
-        return database.query(DatabaseHelper.P_TABLE_NAME, columns, null, null, null, null, null);
+        return database.query(
+                DatabaseHelper.P_TABLE_NAME,
+                columns,
+                null,
+                null,
+                null,
+                null,
+                DatabaseHelper.P_TIME+" DESC"
+                );
     }
 
     public int update(long _id, String name, String desc) {
