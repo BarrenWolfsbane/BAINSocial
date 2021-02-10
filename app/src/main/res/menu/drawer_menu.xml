@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mstb="http://schemas.android.com/tools">
 
     <item
         android:id="@+id/homeFragItem"
-        android:title="Feed" />
+        android:icon="@drawable/ic_one"
+        android:title="Feed"
+        android:checked="true"/>
     <item
         android:id="@+id/postCreateFragItem"
+        android:icon="@drawable/ic_two"
         android:title="New Post" />
     <item
         android:title=" " />
     <item
+        android:icon="@drawable/ic_three"
         android:title="Wallet" />
     <item
         android:title=" " />
@@ -21,4 +26,18 @@
     <item
         android:title="Settings" />
 
+    <item android:title="Sub items">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:title="Sub item 1" />
+                <item
+                    android:title="Sub item 2" />
+
+                <item android:id="@+id/online_Mode_Seek"
+                    app:actionLayout="@layout/action_view_seek"
+                    android:title="Online Mode" />
+            </group>
+        </menu>
+    </item>
 </menu>
