@@ -8,6 +8,17 @@
     <item
         android:id="@+id/postCreateFragItem"
         android:title="New Post" />
-
+    <item
+        android:title=" " />
+    <item
+        android:title="Wallet" />
+    <item
+        android:title=" " />
+    <item
+        android:title="Keys" />
+    <item
+        android:title="Share" />
+    <item
+        android:title="Settings" />
 
 </menu>

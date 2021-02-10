@@ -1,10 +1,16 @@
 package tv.bain.bainsocial.fragments;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
+import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
@@ -65,6 +72,7 @@ public class HomeFrag extends Fragment {
     private void initiateDrawer() {
         ((AppCompatActivity) requireActivity()).setSupportActionBar(b.toolbar);
         toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
+
         b.drawerLayout.addDrawerListener(toggle);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setHomeButtonEnabled(true);
@@ -76,16 +84,42 @@ public class HomeFrag extends Fragment {
                         b.drawerLayout.close();
                         return true;
                     }
-
                     if (item.getItemId() == R.id.postCreateFragItem) {
                         goToNewPostFrag();
                         return true;
                     }
-
                     return false;
                 }
         );
+        setNavHeader();
     }
+
+    public void setNavHeader(){
+        int textCL = Color.BLACK;
+        View headerLayout = b.navView.getHeaderView(0); //Gets the Header
+        //headerLayout.setBackgroundColor(Color.GRAY); //let users define this
+        //headerLayout.setBackground();//set Background to the User Defined Image
+
+        TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
+        tV.setText("ID: "+BAINServer.getInstance().getUser().getuID());
+        tV.setTextColor(textCL);
+
+        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameLabel);
+        tV.setTextColor(textCL);
+        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameText);
+        tV.setTextColor(textCL);
+
+
+        ImageView profPhoto = headerLayout.findViewById(R.id.hvProfileImage);
+        //profPhoto.setImageBitmap();//we can use the Image Class to set this
+
+        Drawable drawable= getResources().getDrawable(R.drawable.f810049d4e3320ba053d1dca055d4764676451fc);
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Drawable newdrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+
+        b.toolbar.setNavigationIcon(newdrawable);
+    }
+
 
     @Override
     public void onStart() {
