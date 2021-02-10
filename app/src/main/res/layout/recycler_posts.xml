@@ -33,7 +33,6 @@
                 android:contentDescription="TODO"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc"
                 tools:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc" />
 
             <TextView
@@ -45,7 +44,14 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView3"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="User" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <TextView
             android:id="@+id/description"
