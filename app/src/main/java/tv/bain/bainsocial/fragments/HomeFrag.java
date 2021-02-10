@@ -28,6 +28,7 @@ import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 public class HomeFrag extends Fragment {
@@ -142,7 +143,7 @@ public class HomeFrag extends Fragment {
 
         Drawable drawable= getResources().getDrawable(R.drawable.f810049d4e3320ba053d1dca055d4764676451fc);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Drawable newdrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+        Drawable newdrawable = new BitmapDrawable(getResources(),Texture.resize(bitmap,50,50));
 
         b.toolbar.setNavigationIcon(newdrawable);
     }
