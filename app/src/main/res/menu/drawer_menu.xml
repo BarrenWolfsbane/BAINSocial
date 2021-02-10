@@ -25,7 +25,6 @@
         android:title="Share" />
     <item
         android:title="Settings" />
-
     <item android:title="Sub items">
         <menu>
             <group android:checkableBehavior="single">
@@ -33,7 +32,7 @@
                 <item
                     android:id="@+id/online_Mode_Seek"
                     android:title="Data Mode: "
-                    app:actionLayout="@layout/action_view_seek" />
+                    app:actionLayout="@layout/action_view_tri_toggle" />
             </group>
         </menu>
     </item>

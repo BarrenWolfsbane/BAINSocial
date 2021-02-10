@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<it.beppi.tristatetogglebutton_library.TriStateToggleButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="140dp"
+    android:layout_height="20dp"
+    android:layout_gravity="center|center_horizontal|center_vertical"
+    android:padding="30dp" />
