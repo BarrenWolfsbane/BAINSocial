@@ -6,6 +6,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import tv.bain.bainsocial.databinding.RecyclerPostsBinding;
@@ -45,6 +48,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.Holder> {
         }
 
         private void bindData(Post post) {
+            Date date = new Date(post.getTimeCreated());
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            b.setPostTime(df.format(date));
             b.setPost(post);
             b.executePendingBindings();
         }
