@@ -7,10 +7,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
@@ -89,10 +92,31 @@ public class HomeFrag extends Fragment {
                         goToNewPostFrag();
                         return true;
                     }
+                    /*
+                    if(item.getItemId() == R.id.online_Mode_Seek) {
+                        b.navView.getMenu().getItem(8).getSubMenu().getItem(1).setTitle("true");
+                    }
+                    */
                     return false;
                 }
         );
-        SeekBar onlineModeSB = b.navView.findViewById(R.id.online_Mode_Seek);
+        Menu m = b.navView.getMenu();
+        SubMenu sm = m.getItem(8).getSubMenu();
+        final TriStateToggleButton tstb_1 = (TriStateToggleButton) sm.getItem(1).getActionView();
+        tstb_1.toggleOff();
+
+        MenuItem OnlineTog = b.navView.getMenu().getItem(8).getSubMenu().getItem(1);
+        OnlineTog.setTitle("Data Mode: Offline");
+        tstb_1.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
+            @Override
+            public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
+                switch (toggleStatus) {
+                    case off: OnlineTog.setTitle("Data Mode: Offline"); break;
+                    case mid: OnlineTog.setTitle("Data Mode: Local"); break;
+                    case on: OnlineTog.setTitle("Data Mode: Online"); break;
+                }
+            }
+        });
 
         setNavHeader();
     }
@@ -104,7 +128,7 @@ public class HomeFrag extends Fragment {
         //headerLayout.setBackground();//set Background to the User Defined Image
 
         TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
-        tV.setText("ID: "+BAINServer.getInstance().getUser().getuID());
+        tV.setText("ID: "+ BAINServer.getInstance().getUser().getuID());
         tV.setTextColor(textCL);
 
         tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameLabel);
