@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.nikartm.support.ImageBadgeView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ibv_icon2"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_gravity="center"
+    android:layout_marginTop="10dp"
+    android:padding="10dp"
+    android:src="@drawable/notifybell"
+    app:ibv_badgeColor="#00ACC1"
+    app:ibv_badgeLimitValue="false"
+    app:ibv_badgeTextColor="#ffffff"
+    app:ibv_badgeTextSize="12sp"
+    app:ibv_badgeTextStyle="bold"
+    app:ibv_badgeValue="0"
+    app:ibv_fixedBadgeRadius="15dp" />

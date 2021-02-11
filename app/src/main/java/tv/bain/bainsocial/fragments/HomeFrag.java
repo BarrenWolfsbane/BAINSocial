@@ -33,6 +33,7 @@ import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
@@ -187,17 +188,14 @@ public class HomeFrag extends Fragment {
 
         MenuItem OnlineTog = b.navView.getMenu().getItem(8).getSubMenu().getItem(1);
         OnlineTog.setTitle("Data Mode: Offline");
-        tstb_1.setOnToggleChanged((toggleStatus, booleanToggleStatus, toggleIntValue) -> {
-            switch (toggleStatus) {
-                case off:
-                    OnlineTog.setTitle("Data Mode: Offline");
-                    break;
-                case mid:
-                    OnlineTog.setTitle("Data Mode: Local");
-                    break;
-                case on:
-                    OnlineTog.setTitle("Data Mode: Online");
-                    break;
+        tstb_1.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
+            @Override
+            public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
+                switch (toggleStatus) {
+                    case off: OnlineTog.setTitle("Data Mode: Offline"); break;
+                    case mid: OnlineTog.setTitle("Data Mode: Local"); break;
+                    case on: OnlineTog.setTitle("Data Mode: Online"); break;
+                }
             }
         });
 
