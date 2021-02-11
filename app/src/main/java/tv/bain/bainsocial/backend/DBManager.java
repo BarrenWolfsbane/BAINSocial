@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,15 +100,7 @@ public class DBManager {
 
     public Cursor fetch() {
         String[] columns = DatabaseHelper.P_COLUMNS_LIST;
-        return database.query(
-                DatabaseHelper.P_TABLE_NAME,
-                columns,
-                null,
-                null,
-                null,
-                null,
-                DatabaseHelper.P_TIME+" DESC"
-                );
+        return database.query(DatabaseHelper.P_TABLE_NAME, columns,null,null,null,null,DatabaseHelper.P_TIME+" DESC");
     }
 
     public int update(long _id, String name, String desc) {
@@ -200,7 +191,7 @@ public class DBManager {
 
                 thisUser = new User(uID, uHandle, uIsFollow, uPubKey);
                 thisUser.setPrivateKey(uPrivKey);
-                Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
             } while (res.moveToNext());
             BAINServer.getInstance().setUser(thisUser); //Updates entire User with data pulled from DB
             cb.loginKeyDBCallback(res.getCount());

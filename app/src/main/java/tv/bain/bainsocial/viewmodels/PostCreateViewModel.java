@@ -11,7 +11,6 @@ import tv.bain.bainsocial.utils.MyState;
 import static java.lang.System.currentTimeMillis;
 
 public class PostCreateViewModel extends ViewModel {
-
     private String postDescription = "";
     private final MutableLiveData<MyState> state = new MutableLiveData<>(MyState.IDLE.INSTANCE);
 
@@ -38,7 +37,7 @@ public class PostCreateViewModel extends ViewModel {
         thisPost.setUid(authorData);
         thisPost.setText(postDescription);
         thisPost.setTimeCreated(currentTimeMillis());
-        thisPost.setPid(Crypt.md5(thisPost.getText()));
+        thisPost.setPid(Crypt.md5(postDescription));
 
         //thisPost.setReplyTo();
         //thisPost.setAntiTamper();

@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,12 +83,10 @@ public class HomeFrag extends Fragment {
         b.setFrag(this);
         b.recycler.setAdapter(adapter);
     }
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         // added this to the onCreate to make it work: setHasOptionsMenu(true);
         inflater.inflate(R.menu.posts_toolbar_menu, menu);
-
         prepareTheSearchView(menu);
     }
 

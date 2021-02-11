@@ -57,6 +57,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     testImplementation 'junit:junit:4.13.1'
     implementation 'com.github.BeppiMenozzi:TriStateToggleButton:1.1.4'
+    implementation 'com.github.nikartm:image-support:1.1.0'
+    implementation 'id.zelory:compressor:3.0.0'
 }
 
 apply from: 'https://gist.githubusercontent.com/kibotu/994c9cc65fe623b76b76fedfac74b34b/raw/65ee52482ba65050e015f4b00d8d2fc9172a10e8/javadoc.gradle'

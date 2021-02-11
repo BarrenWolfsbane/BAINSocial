@@ -88,7 +88,7 @@ public class BAINServer extends Service {
 
         NotificationMan.createNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "BAIN Services", "Running in Background, Click to Access App");
 
-        SendToast("Ding");
+        //SendToast("Ding");
         return mStartMode;
     }
 
