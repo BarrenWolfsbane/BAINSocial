@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/holo_blue_light"
-    android:padding="8dp"
+    android:paddingTop="32dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:weightSum="1">
 

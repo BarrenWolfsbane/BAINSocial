@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:mstb="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/homeFragItem"
+        android:checked="true"
         android:icon="@drawable/ic_one"
-        android:title="Feed"
-        android:checked="true"/>
+        android:title="Feed" />
     <item
         android:id="@+id/postCreateFragItem"
         android:icon="@drawable/ic_two"
         android:title="New Post" />
-    <item
-        android:title=" " />
+    <item android:title=" " />
+
     <item
         android:icon="@drawable/ic_three"
         android:title="Wallet" />
+
+    <item android:title=" " />
+
+    <item android:title="Keys" />
+
+    <item android:title="Share" />
+
+    <item android:title="Settings" />
+
     <item
-        android:title=" " />
-    <item
-        android:title="Keys" />
-    <item
-        android:title="Share" />
-    <item
-        android:title="Settings" />
-    <item android:title="Sub items">
+        android:id="@+id/subItemsItem"
+        android:title="Sub items">
         <menu>
             <group android:checkableBehavior="single">
                 <item android:title="Sub item 1" />
                 <item
                     android:id="@+id/online_Mode_Seek"
-                    android:title="Data Mode: "
+                    android:title="Data Mode: Offline"
                     app:actionLayout="@layout/action_view_tri_toggle" />
             </group>
         </menu>
