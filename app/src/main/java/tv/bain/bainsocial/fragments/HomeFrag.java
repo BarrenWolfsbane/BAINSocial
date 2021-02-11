@@ -2,9 +2,7 @@ package tv.bain.bainsocial.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,27 +13,25 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-
-import java.util.Objects;
 
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
-import tv.bain.bainsocial.datatypes.Texture;
+import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 public class HomeFrag extends Fragment {
@@ -45,7 +41,6 @@ public class HomeFrag extends Fragment {
     private HomeViewModel vm;
     private HomeFragmentBinding b = null;
     private PostsAdapter adapter;
-    private ActionBarDrawerToggle toggle;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -67,14 +62,11 @@ public class HomeFrag extends Fragment {
         vm = new ViewModelProvider(this).get(HomeViewModel.class);
         bindData();
 
+        initiateToolbar();
         initiateDrawer();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        /* Manages the shape of the Drawer's Hamburger button when the configuration changes*/
-        toggle.onConfigurationChanged(newConfig);
+        setToolbarIcon();
+        initiateTrisStateSwitch();
+        setNavHeader();
     }
 
     private void bindData() {
@@ -83,22 +75,33 @@ public class HomeFrag extends Fragment {
         b.setFrag(this);
         b.recycler.setAdapter(adapter);
     }
+
+    private void initiateToolbar() {
+        //TODO: create a resized drawable
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(b.toolbar);
+        ActionBar bar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (bar == null) return;
+
+        bar.setDisplayHomeAsUpEnabled(true);
+        bar.setHomeButtonEnabled(true);
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         // added this to the onCreate to make it work: setHasOptionsMenu(true);
         inflater.inflate(R.menu.posts_toolbar_menu, menu);
-        prepareTheSearchView(menu);
+
+        initiateTheSearchView(menu);
     }
 
-    private void prepareTheSearchView(Menu menu) {
+    private void initiateTheSearchView(Menu menu) {
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (searchItem == null) return;
 
-        SearchView searchView = null;
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        Objects.requireNonNull(searchItem).setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -111,44 +114,32 @@ public class HomeFrag extends Fragment {
             }
         });
 
-        if (searchView != null) {
-            searchView.setSearchableInfo(Objects.requireNonNull(searchManager).getSearchableInfo(requireActivity().getComponentName()));
+        if (searchView == null) return;
 
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return true;
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+        searchView.setQueryHint("Search for posts");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!query.isEmpty()) {
+                    Toast.makeText(requireActivity(), "Search not implemented", Toast.LENGTH_SHORT).show();
                 }
-
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    if (!query.equals("")) {
-                        Toast.makeText(requireActivity(), "", Toast.LENGTH_SHORT).show();
-                    }
-                    return false;
-                }
-            };
-            searchView.setOnQueryTextListener(queryTextListener);
-
-            searchView.setQueryHint("Search for posts");
-        }
+                return false;
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
-            Toast.makeText(requireActivity(), "Searching", Toast.LENGTH_SHORT).show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void initiateDrawer() {
-        ((AppCompatActivity) requireActivity()).setSupportActionBar(b.toolbar);
-        toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
 
         b.drawerLayout.addDrawerListener(toggle);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         toggle.syncState();
 
         b.navView.setNavigationItemSelectedListener(item ->
@@ -169,51 +160,56 @@ public class HomeFrag extends Fragment {
                     return false;
                 }
         );
-        Menu m = b.navView.getMenu();
-        SubMenu sm = m.getItem(8).getSubMenu();
-        final TriStateToggleButton tstb_1 = (TriStateToggleButton) sm.getItem(1).getActionView();
-        tstb_1.toggleOff();
+    }
 
-        MenuItem OnlineTog = b.navView.getMenu().getItem(8).getSubMenu().getItem(1);
-        OnlineTog.setTitle("Data Mode: Offline");
-        tstb_1.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
-                switch (toggleStatus) {
-                    case off: OnlineTog.setTitle("Data Mode: Offline"); break;
-                    case mid: OnlineTog.setTitle("Data Mode: Local"); break;
-                    case on: OnlineTog.setTitle("Data Mode: Online"); break;
-                }
+    private void setToolbarIcon() {
+        /* Toolbar icon must be set after initializing the Drawer */
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.f810049d4e3320ba053d1dca055d4764676451fc, null);
+        if (drawable == null) return;
+
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+
+        b.toolbar.setNavigationIcon(finalDrawable);
+    }
+
+    private void initiateTrisStateSwitch() {
+        Menu m = b.navView.getMenu();
+        SubMenu sm = m.findItem(R.id.subItemsItem).getSubMenu();
+
+        final TriStateToggleButton tripleSwitch = (TriStateToggleButton) sm.findItem(R.id.online_Mode_Seek).getActionView();
+
+        MenuItem connectionModeTxt = sm.findItem(R.id.online_Mode_Seek);
+        connectionModeTxt.setTitle("Data Mode: Offline");
+
+        tripleSwitch.setOnToggleChanged((toggleStatus, booleanToggleStatus, toggleIntValue) -> {
+            switch (toggleStatus) {
+                case off:
+                    connectionModeTxt.setTitle("Data Mode: Offline");
+                    break;
+                case mid:
+                    connectionModeTxt.setTitle("Data Mode: Local");
+                    break;
+                case on:
+                    connectionModeTxt.setTitle("Data Mode: Online");
+                    break;
             }
         });
-
-        setNavHeader();
     }
 
     public void setNavHeader() {
-        int textCL = Color.BLACK;
-        View headerLayout = b.navView.getHeaderView(0); //Gets the Header
-        //headerLayout.setBackgroundColor(Color.GRAY); //let users define this
-        //headerLayout.setBackground();//set Background to the User Defined Image
+        //TODO: let users decide what background and profile image they want
+        //TODO: Careful with memory leaks caused by the binding
+        NavHeaderBinding binding = NavHeaderBinding.inflate(getLayoutInflater());
+        binding.headerIDText.setText("ID: " + BAINServer.getInstance().getUser().getuID());
+    }
 
-        TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
-        tV.setText("ID: "+ BAINServer.getInstance().getUser().getuID());
-        tV.setTextColor(textCL);
-
-        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameLabel);
-        tV.setTextColor(textCL);
-        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameText);
-        tV.setTextColor(textCL);
-
-
-        ImageView profPhoto = headerLayout.findViewById(R.id.hvProfileImage);
-        //profPhoto.setImageBitmap();//we can use the Image Class to set this
-
-        Drawable drawable = getResources().getDrawable(R.drawable.f810049d4e3320ba053d1dca055d4764676451fc);
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Drawable newdrawable = new BitmapDrawable(getResources(),Texture.resize(bitmap,50,50));
-
-        b.toolbar.setNavigationIcon(newdrawable);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_search) {
+            Toast.makeText(requireActivity(), "Searching", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -233,7 +229,6 @@ public class HomeFrag extends Fragment {
     private void initiateAdapter() {
         adapter = new PostsAdapter(vm.getAllLocalPosts());
     }
-
 
     public void goToNewPostFrag() {
         NavHostFragment.findNavController(this).navigate(R.id.action_homeFrag_to_postCreateFrag);
