@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,13 +11,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -37,6 +33,7 @@ import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
+import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 public class HomeFrag extends Fragment {
@@ -172,6 +169,17 @@ public class HomeFrag extends Fragment {
                     return false;
                 }
         );
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.f810049d4e3320ba053d1dca055d4764676451fc, null);
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Drawable newdrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+
+        b.toolbar.setNavigationIcon(newdrawable);
+
+        initiateTrisStateSwitch();
+        setNavHeader();
+    }
+
+    private void initiateTrisStateSwitch() {
         Menu m = b.navView.getMenu();
         SubMenu sm = m.getItem(8).getSubMenu();
         final TriStateToggleButton tstb_1 = (TriStateToggleButton) sm.getItem(1).getActionView();
@@ -179,44 +187,29 @@ public class HomeFrag extends Fragment {
 
         MenuItem OnlineTog = b.navView.getMenu().getItem(8).getSubMenu().getItem(1);
         OnlineTog.setTitle("Data Mode: Offline");
-        tstb_1.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
-                switch (toggleStatus) {
-                    case off: OnlineTog.setTitle("Data Mode: Offline"); break;
-                    case mid: OnlineTog.setTitle("Data Mode: Local"); break;
-                    case on: OnlineTog.setTitle("Data Mode: Online"); break;
-                }
+        tstb_1.setOnToggleChanged((toggleStatus, booleanToggleStatus, toggleIntValue) -> {
+            switch (toggleStatus) {
+                case off:
+                    OnlineTog.setTitle("Data Mode: Offline");
+                    break;
+                case mid:
+                    OnlineTog.setTitle("Data Mode: Local");
+                    break;
+                case on:
+                    OnlineTog.setTitle("Data Mode: Online");
+                    break;
             }
         });
 
-        setNavHeader();
     }
 
     public void setNavHeader() {
-        int textCL = Color.BLACK;
-        View headerLayout = b.navView.getHeaderView(0); //Gets the Header
-        //headerLayout.setBackgroundColor(Color.GRAY); //let users define this
-        //headerLayout.setBackground();//set Background to the User Defined Image
+        //TODO: let users decide what background they want
+        //TODO: Careful with memory leaks caused by the binding
+        NavHeaderBinding binding = NavHeaderBinding.inflate(getLayoutInflater());
 
-        TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
-        tV.setText("ID: "+ BAINServer.getInstance().getUser().getuID());
-        tV.setTextColor(textCL);
-
-        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameLabel);
-        tV.setTextColor(textCL);
-        tV = headerLayout.findViewById(R.id.nvHeaderDisplayNameText);
-        tV.setTextColor(textCL);
-
-
-        ImageView profPhoto = headerLayout.findViewById(R.id.hvProfileImage);
-        //profPhoto.setImageBitmap();//we can use the Image Class to set this
-
-        Drawable drawable = getResources().getDrawable(R.drawable.f810049d4e3320ba053d1dca055d4764676451fc);
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Drawable newdrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
-
-        b.toolbar.setNavigationIcon(newdrawable);
+        binding.headerIDText.setText("ID: " + BAINServer.getInstance().getUser().getuID());
+        //binding.hvProfileImage.setImageBitmap();//we can use the Image Class to set this
     }
 
 
