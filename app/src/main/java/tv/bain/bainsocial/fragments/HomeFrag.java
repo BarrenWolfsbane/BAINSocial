@@ -2,14 +2,10 @@ package tv.bain.bainsocial.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +13,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,8 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import java.io.File;
-
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
@@ -43,11 +35,9 @@ import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 public class HomeFrag extends Fragment {
-    private static final int RESULT_OK = 0;
 
     //TODO: Implement a callback to reload posts if a new one has been added (here or in the ViewModel)
 
-    private final int SELECT_PHOTO = 1;
     private HomeViewModel vm;
     private HomeFragmentBinding b = null;
     private PostsAdapter adapter;
@@ -212,49 +202,6 @@ public class HomeFrag extends Fragment {
         //TODO: Careful with memory leaks caused by the binding
         NavHeaderBinding binding = NavHeaderBinding.inflate(getLayoutInflater());
         binding.headerIDText.setText("ID: " + BAINServer.getInstance().getUser().getuID());
-
-
-        View headerLayout = b.navView.getHeaderView(0); //Gets the Header
-        TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
-        tV.setText("ID: "+ BAINServer.getInstance().getUser().getuID());
-        ImageView iV = headerLayout.findViewById(R.id.hvProfileImage);
-
-        iV.setOnLongClickListener(v -> {
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            Intent chooser = new Intent(Intent.ACTION_CHOOSER);
-            chooser.putExtra(Intent.EXTRA_INTENT, photoPickerIntent);
-            chooser.putExtra(Intent.EXTRA_TITLE, "Profile Image Selection");
-
-            Intent[] intentArray =  {cameraIntent};
-            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-            startActivityForResult(chooser, SELECT_PHOTO);
-            return false;
-        });
-    }
-
-
-
-
-    public void onActivityResult(int reqCode, int resCode, Intent data) {
-        if (resCode == RESULT_OK) {
-            if (reqCode == SELECT_PHOTO) {
-                File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Test" + File.separator);
-                if (!root.exists()) root.mkdirs();
-                String fname = "img_" + System.currentTimeMillis() + ".jpg";
-                File sdImageMainDirectory = new File(root, fname);
-                Uri outputFileUri = Uri.fromFile(sdImageMainDirectory);
-                Log.println(Log.ASSERT,"HOMEFRAG:", "fName: "+fname);
-
-                View headerLayout = b.navView.getHeaderView(0); //Gets the Header
-                TextView tV = headerLayout.findViewById(R.id.header_ID_Text);
-                tV.setText("Image: "+ fname);
-
-                BAINServer.getInstance().SendToast(fname);
-            }
-        }
     }
 
     @Override
@@ -264,6 +211,7 @@ public class HomeFrag extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onStart() {
@@ -285,4 +233,5 @@ public class HomeFrag extends Fragment {
     public void goToNewPostFrag() {
         NavHostFragment.findNavController(this).navigate(R.id.action_homeFrag_to_postCreateFrag);
     }
+
 }
