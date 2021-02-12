@@ -86,6 +86,69 @@ public class HomeFrag extends Fragment {
         bar.setHomeButtonEnabled(true);
     }
 
+    private void initiateDrawer() {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
+
+        b.drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        b.navView.setNavigationItemSelectedListener(item -> {
+                    if (item.getItemId() == R.id.homeFragItem) {
+                        b.drawerLayout.close();
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.postCreateFragItem) {
+                        goToNewPostFrag();
+                        return true;
+                    }
+                    return false;
+                }
+        );
+    }
+
+    private void setToolbarIcon() {
+        /* Toolbar icon must be set after initializing the Drawer */
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.f810049d4e3320ba053d1dca055d4764676451fc, null);
+        if (drawable == null) return;
+
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+
+        b.toolbar.setNavigationIcon(finalDrawable);
+    }
+
+    private void initiateTrisStateSwitch() {
+        Menu m = b.navView.getMenu();
+        SubMenu sm = m.findItem(R.id.subItemsItem).getSubMenu();
+
+        final TriStateToggleButton tripleSwitch = (TriStateToggleButton) sm.findItem(R.id.online_Mode_Seek).getActionView();
+
+        MenuItem connectionModeTxt = sm.findItem(R.id.online_Mode_Seek);
+        connectionModeTxt.setTitle("Data Mode: Offline");
+
+        tripleSwitch.setOnToggleChanged((toggleStatus, booleanToggleStatus, toggleIntValue) -> {
+            switch (toggleStatus) {
+                case off:
+                    connectionModeTxt.setTitle("Data Mode: Offline");
+                    break;
+                case mid:
+                    connectionModeTxt.setTitle("Data Mode: Local");
+                    break;
+                case on:
+                    connectionModeTxt.setTitle("Data Mode: Online");
+                    break;
+            }
+        });
+    }
+
+    public void setNavHeader() {
+        //TODO: let users decide what background and profile image they want
+        //TODO: Careful with memory leaks caused by the binding
+        NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
+        String idText = "ID: " + BAINServer.getInstance().getUser().getuID();
+        binding.headerIDText.setText(idText);
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         // added this to the onCreate to make it work: setHasOptionsMenu(true);
@@ -135,74 +198,6 @@ public class HomeFrag extends Fragment {
         });
     }
 
-
-    private void initiateDrawer() {
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
-
-        b.drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        b.navView.setNavigationItemSelectedListener(item ->
-                {
-                    if (item.getItemId() == R.id.homeFragItem) {
-                        b.drawerLayout.close();
-                        return true;
-                    }
-                    if (item.getItemId() == R.id.postCreateFragItem) {
-                        goToNewPostFrag();
-                        return true;
-                    }
-                    /*
-                    if(item.getItemId() == R.id.online_Mode_Seek) {
-                        b.navView.getMenu().getItem(8).getSubMenu().getItem(1).setTitle("true");
-                    }
-                    */
-                    return false;
-                }
-        );
-    }
-
-    private void setToolbarIcon() {
-        /* Toolbar icon must be set after initializing the Drawer */
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.f810049d4e3320ba053d1dca055d4764676451fc, null);
-        if (drawable == null) return;
-
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
-
-        b.toolbar.setNavigationIcon(finalDrawable);
-    }
-
-    private void initiateTrisStateSwitch() {
-        Menu m = b.navView.getMenu();
-        SubMenu sm = m.findItem(R.id.subItemsItem).getSubMenu();
-
-        final TriStateToggleButton tripleSwitch = (TriStateToggleButton) sm.findItem(R.id.online_Mode_Seek).getActionView();
-
-        MenuItem connectionModeTxt = sm.findItem(R.id.online_Mode_Seek);
-        connectionModeTxt.setTitle("Data Mode: Offline");
-
-        tripleSwitch.setOnToggleChanged((toggleStatus, booleanToggleStatus, toggleIntValue) -> {
-            switch (toggleStatus) {
-                case off:
-                    connectionModeTxt.setTitle("Data Mode: Offline");
-                    break;
-                case mid:
-                    connectionModeTxt.setTitle("Data Mode: Local");
-                    break;
-                case on:
-                    connectionModeTxt.setTitle("Data Mode: Online");
-                    break;
-            }
-        });
-    }
-
-    public void setNavHeader() {
-        //TODO: let users decide what background and profile image they want
-        //TODO: Careful with memory leaks caused by the binding
-        NavHeaderBinding binding = NavHeaderBinding.inflate(getLayoutInflater());
-        binding.headerIDText.setText("ID: " + BAINServer.getInstance().getUser().getuID());
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
