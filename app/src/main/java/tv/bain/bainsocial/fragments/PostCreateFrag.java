@@ -54,7 +54,9 @@ public class PostCreateFrag extends Fragment {
             else if (myState instanceof MyState.ERROR) {
                 Toast.makeText(requireActivity(), ((MyState.ERROR) myState).getMsg(), Toast.LENGTH_SHORT).show();
             }
+            vm.setIdleState();
         });
+
     }
 
     @Override
