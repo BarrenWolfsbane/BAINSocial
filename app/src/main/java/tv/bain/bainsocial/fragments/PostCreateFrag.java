@@ -60,7 +60,7 @@ public class PostCreateFrag extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        /* Serves to keep the bottom side buttons hidden when the keyboard is shown */
+        /* Keeps the bottom side buttons hidden when the keyboard is shown */
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
     }
 
