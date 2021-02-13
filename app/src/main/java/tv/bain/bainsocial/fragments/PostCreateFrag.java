@@ -54,13 +54,15 @@ public class PostCreateFrag extends Fragment {
             else if (myState instanceof MyState.ERROR) {
                 Toast.makeText(requireActivity(), ((MyState.ERROR) myState).getMsg(), Toast.LENGTH_SHORT).show();
             }
+            vm.setIdleState();
         });
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        /* Serves to keep the bottom side buttons hidden when the keyboard is shown */
+        /* Keeps the bottom side buttons hidden when the keyboard is shown */
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
     }
 

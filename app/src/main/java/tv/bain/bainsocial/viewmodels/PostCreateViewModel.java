@@ -11,6 +11,7 @@ import tv.bain.bainsocial.utils.MyState;
 import static java.lang.System.currentTimeMillis;
 
 public class PostCreateViewModel extends ViewModel {
+
     private String postDescription = "";
     private final MutableLiveData<MyState> state = new MutableLiveData<>(MyState.IDLE.INSTANCE);
 
@@ -42,12 +43,16 @@ public class PostCreateViewModel extends ViewModel {
         //thisPost.setReplyTo();
         //thisPost.setAntiTamper();
 
-        if(!postDescription.trim().matches("")) {
-            BAINServer.getInstance().getDb().open();
-            BAINServer.getInstance().getDb().insert_Post(thisPost);
-            BAINServer.getInstance().getDb().close();
-            state.postValue(new MyState.FINISHED());
+        if (postDescription.trim().isEmpty()) {
+            state.postValue(new MyState.ERROR("Please add a description to your post"));
+            return;
         }
+
+        BAINServer.getInstance().getDb().open();
+        BAINServer.getInstance().getDb().insert_Post(thisPost);
+        BAINServer.getInstance().getDb().close();
+        state.postValue(new MyState.FINISHED());
+
     }
 
     public void setIdleState() {

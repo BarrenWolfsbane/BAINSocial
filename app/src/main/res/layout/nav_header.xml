@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/holo_blue_light"
-    android:orientation="vertical"
-    android:paddingTop="24dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:weightSum="1">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/hvProfileImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc" />
 
 
-        <ImageView
-            android:id="@+id/hvProfileImage"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="0.2"
-            android:scaleType="fitStart"
-            app:srcCompat="@drawable/f810049d4e3320ba053d1dca055d4764676451fc" />
+    <TextView
+        android:id="@+id/nvHeaderDisplayNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Display Name"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/hvProfileImage"
+        app:layout_constraintTop_toTopOf="@+id/hvProfileImage" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/nvHeaderDisplayNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Display Name"
-                android:textColor="@android:color/black" />
-
-            <TextView
-                android:id="@+id/nvHeaderDisplayNameText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Touch and hold to set name"
-                android:textColor="@android:color/black" />
-
-        </LinearLayout>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/nvHeaderDisplayNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Touch and hold to set name"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/nvHeaderDisplayNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/nvHeaderDisplayNameLabel" />
 
     <TextView
         android:id="@+id/header_ID_Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
+        android:layout_marginTop="8dp"
         android:text="User: ID"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/hvProfileImage"
+        app:layout_constraintTop_toBottomOf="@+id/hvProfileImage" />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
