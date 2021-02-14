@@ -82,6 +82,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    public static final String I_TABLE_NAME = "IMAGES";
+    public static final String I_ID = "iID"; //Public Key this stores data of those who were connected to
+    public static final String I_STRING = "iString"; //Public Address
+    private static final String CREATE_I_TABLE =
+            "create table " + I_TABLE_NAME +
+                    "(" +
+                    I_ID + " TEXT PRIMARY KEY, " +
+                    I_STRING + " TEXT NOT NULL" +
+                    ");";
+
+
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -91,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_U_TABLE);
         db.execSQL(CREATE_P_TABLE);
         db.execSQL(CREATE_D_TABLE);
+        db.execSQL(CREATE_I_TABLE);
     }
 
     @Override
@@ -98,6 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + U_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + P_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + D_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + I_TABLE_NAME);
         onCreate(db);
     }
 }

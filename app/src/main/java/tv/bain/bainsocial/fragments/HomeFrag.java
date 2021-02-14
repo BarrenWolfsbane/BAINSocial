@@ -2,10 +2,15 @@ package tv.bain.bainsocial.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,15 +31,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.io.IOException;
+
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.Crypt;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFrag extends Fragment {
+    private static final int SELECT_PHOTO = 1;
 
     //TODO: Implement a callback to reload posts if a new one has been added (here or in the ViewModel)
 
@@ -200,10 +212,91 @@ public class HomeFrag extends Fragment {
     public void setNavHeader() {
         //TODO: let users decide what background and profile image they want
         //TODO: Careful with memory leaks caused by the binding
-        NavHeaderBinding binding = NavHeaderBinding.inflate(getLayoutInflater());
-        binding.headerIDText.setText("ID: " + BAINServer.getInstance().getUser().getuID());
-    }
+        NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
+        String idText = "ID: " + BAINServer.getInstance().getUser().getuID();
+        binding.headerIDText.setText(idText);
+        binding.hvProfileImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
 
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+                Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+                chooser.putExtra(Intent.EXTRA_INTENT, photoPickerIntent);
+                chooser.putExtra(Intent.EXTRA_TITLE, "Profile Image Selection");
+
+
+                Intent[] intentArray =  {cameraIntent};
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
+                startActivityForResult(chooser, SELECT_PHOTO);
+
+                return false;
+            }
+        }
+        );
+    }
+    public void onActivityResult(int reqCode, int resCode, Intent data) {
+        NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
+        String idText = "Photo Selection";
+        if (resCode == RESULT_OK) {
+            if (reqCode == SELECT_PHOTO) {
+                if (data == null) idText = "No Image Selected";
+                else {
+
+                    int intendedSize = 150;
+                    int orientation = 0; //variable stored to figure out if Orientation is at an angle
+
+                    final String action = data.getAction();
+                    Uri selectedImage = data.getData();
+
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+
+
+                    if(!filePath.equals("")) {
+                        Bitmap yourSelectedImage;
+                        try {
+                            yourSelectedImage = Texture.rescale(filePath, intendedSize);
+                            ExifInterface ei = new ExifInterface(filePath);
+                            orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                            if (yourSelectedImage != null) {
+                                switch (orientation) {
+                                    case ExifInterface.ORIENTATION_ROTATE_90: yourSelectedImage = Texture.rotate(yourSelectedImage, 90); break;
+                                    case ExifInterface.ORIENTATION_ROTATE_180: yourSelectedImage = Texture.rotate(yourSelectedImage, 180); break;
+                                }
+                                String base64Thumbnail = Texture.BitMapToBase64String(yourSelectedImage); //we get the base64 string for the thumbnail
+                                String UUID = Crypt.md5(base64Thumbnail);
+                                yourSelectedImage.recycle();
+                                Texture thisImage = new Texture(UUID, base64Thumbnail);
+
+                                BAINServer.getInstance().getDb().open();
+                                BAINServer.getInstance().getDb().insert_Image(thisImage);
+                                BAINServer.getInstance().getDb().close();
+
+                                binding.hvProfileImage.setMaxHeight(150);
+                                binding.hvProfileImage.setMaxWidth(150);
+                                binding.hvProfileImage.setImageBitmap(Texture.base64StringToBitMap(thisImage.getImageString()));
+                                binding.hvProfileImage.setCropToPadding(true);
+                                binding.headerIDText.setText(thisImage.getUUID());
+                            }
+                        } catch (IOException e) {BAINServer.getInstance().SendToast("IOError In Image Opening error:" + e.toString()); }
+                    }
+
+
+
+                }
+            }
+        }
+        binding.headerIDText.setText(idText);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
@@ -211,7 +304,6 @@ public class HomeFrag extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onStart() {

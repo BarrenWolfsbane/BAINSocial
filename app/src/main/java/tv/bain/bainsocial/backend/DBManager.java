@@ -14,6 +14,7 @@ import javax.crypto.SecretKey;
 
 import tv.bain.bainsocial.ICallback;
 import tv.bain.bainsocial.datatypes.Post;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.datatypes.User;
 
 public class DBManager {
@@ -23,10 +24,6 @@ public class DBManager {
     private SQLiteDatabase database;
 
     public DBManager(Context c) {
-        context = c;
-    }
-
-    public DBManager(Context c, ICallback callback) {
         context = c;
     }
 
@@ -91,13 +88,6 @@ public class DBManager {
         database.insert(DatabaseHelper.U_TABLE_NAME, null, contentValue);
     }
 
-    public void postInsert(String name, String desc) {
-        ContentValues contentValue = new ContentValues();
-        contentValue.put(DatabaseHelper.P_TITLE, name);
-        contentValue.put(DatabaseHelper.P_TEXT, desc);
-        database.insert(DatabaseHelper.P_TABLE_NAME, null, contentValue);
-    }
-
     public Cursor fetch() {
         String[] columns = DatabaseHelper.P_COLUMNS_LIST;
         return database.query(DatabaseHelper.P_TABLE_NAME, columns,null,null,null,null,DatabaseHelper.P_TIME+" DESC");
@@ -110,11 +100,6 @@ public class DBManager {
         int i = database.update(DatabaseHelper.P_TABLE_NAME, contentValues, DatabaseHelper.P_ID + " = " + _id, null);
         return i;
     }
-
-    public void delete(long _id) {
-        database.delete(DatabaseHelper.P_TABLE_NAME, DatabaseHelper.P_ID + "=" + _id, null);
-    }
-
 
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
@@ -200,5 +185,13 @@ public class DBManager {
         }
         res.close(); //cursors need to be closed to prevent memory leaks
         return thisUser;
+    }
+
+    public void insert_Image(Texture image) {
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(DatabaseHelper.I_ID, image.getUUID());
+        contentValue.put(DatabaseHelper.I_STRING, image.getImageString());
+
+        database.insert(DatabaseHelper.I_TABLE_NAME, null, contentValue);
     }
 }

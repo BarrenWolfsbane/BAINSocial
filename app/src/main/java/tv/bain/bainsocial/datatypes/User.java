@@ -71,6 +71,10 @@ public class User implements Serializable {
     public void setIsFollowing(Boolean isFollowing) { this.isFollowing = isFollowing; }
     public Boolean getIsFollowing() { return isFollowing; }
 
+    private Texture profileImage;
+    public void setProfileImage(Texture image) { this.profileImage = image; }
+    public Texture getProfileImage(){ return profileImage; }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     public User() {
     }
