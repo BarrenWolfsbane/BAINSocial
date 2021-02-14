@@ -71,9 +71,9 @@ public class User implements Serializable {
     public void setIsFollowing(Boolean isFollowing) { this.isFollowing = isFollowing; }
     public Boolean getIsFollowing() { return isFollowing; }
 
-    private Texture profileImage;
-    public void setProfileImage(Texture image) { this.profileImage = image; }
-    public Texture getProfileImage(){ return profileImage; }
+    private String profileImageID;
+    public void setProfileImageID(String image) { this.profileImageID = image; }
+    public String getProfileImageID(){ return profileImageID; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     public User() {
@@ -86,9 +86,10 @@ public class User implements Serializable {
             this.PublicKey = object.getString("PublicKey");
         } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
     }
-    public User(String uID, String DisplayName,Boolean isFollowing,String PublicKey) {
+    public User(String uID, String DisplayName,Boolean isFollowing,String PublicKey,String profileImageID) {
         this.uID = uID;
         this.DisplayName = DisplayName;
+        this.profileImageID = profileImageID;
         this.isFollowing = isFollowing;
         this.PublicKey = PublicKey;
     }

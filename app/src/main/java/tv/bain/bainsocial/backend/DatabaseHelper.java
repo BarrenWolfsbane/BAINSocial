@@ -15,6 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String U_PRIV_KEY = "PrivateKey"; //Private Key This only gets used once by the user of the phone
     public static final String U_PUB_KEY = "PublicKey"; //Public Key this stores data of those who were connected to
     public static final String U_HANDLE = "Handle"; //What the user is called on the network
+    public static final String U_PROF_IMG = "ProfImage"; //What the user is called on the network
     public static final String U_SECRET = "Secret"; //AES Key or Hashed pass in case of local user.
     private static final String CREATE_U_TABLE =
             "create table " + U_TABLE_NAME +
@@ -22,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     U_ID + " TEXT PRIMARY KEY," +
                     U_IS_FOLLOW + " BOOLEAN," +
                     U_HANDLE + " TEXT, " +
+                    U_PROF_IMG + " TEXT," +
                     U_PRIV_KEY + " TEXT, " +
                     U_PUB_KEY + " TEXT," +
                     U_SECRET + " TEXT" +

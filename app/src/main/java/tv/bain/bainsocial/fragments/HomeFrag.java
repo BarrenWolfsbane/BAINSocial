@@ -38,6 +38,7 @@ import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.backend.Crypt;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.datatypes.Texture;
@@ -181,7 +182,6 @@ public class HomeFrag extends Fragment {
 
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
-
         b.toolbar.setNavigationIcon(finalDrawable);
     }
 
@@ -259,8 +259,6 @@ public class HomeFrag extends Fragment {
                     String filePath = cursor.getString(columnIndex);
                     cursor.close();
 
-
-
                     if(!filePath.equals("")) {
                         Bitmap yourSelectedImage;
                         try {
@@ -277,15 +275,19 @@ public class HomeFrag extends Fragment {
                                 yourSelectedImage.recycle();
                                 Texture thisImage = new Texture(UUID, base64Thumbnail);
 
-                                BAINServer.getInstance().getDb().open();
-                                BAINServer.getInstance().getDb().insert_Image(thisImage);
-                                BAINServer.getInstance().getDb().close();
-
                                 binding.hvProfileImage.setMaxHeight(150);
                                 binding.hvProfileImage.setMaxWidth(150);
                                 binding.hvProfileImage.setImageBitmap(Texture.base64StringToBitMap(thisImage.getImageString()));
                                 binding.hvProfileImage.setCropToPadding(true);
-                                binding.headerIDText.setText(thisImage.getUUID());
+                                binding.headerIDText.setText(thisImage.getUUID()); //Sets the Header
+
+                                BAINServer.getInstance().getDb().open();
+                                BAINServer.getInstance().getDb().insert_Image(thisImage); //ads Image to database
+                                BAINServer.getInstance().getUser().setProfileImageID(thisImage.getUUID()); //sets the User
+                                BAINServer.getInstance().getDb().update_User(BAINServer.getInstance().getUser(), DatabaseHelper.U_PROF_IMG, thisImage.getUUID()); // Updates Database
+                                BAINServer.getInstance().getDb().close();
+
+                                setToolbarIcon();
                             }
                         } catch (IOException e) {BAINServer.getInstance().SendToast("IOError In Image Opening error:" + e.toString()); }
                     }

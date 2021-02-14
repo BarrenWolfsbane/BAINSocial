@@ -93,14 +93,6 @@ public class DBManager {
         return database.query(DatabaseHelper.P_TABLE_NAME, columns,null,null,null,null,DatabaseHelper.P_TIME+" DESC");
     }
 
-    public int update(long _id, String name, String desc) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseHelper.P_TITLE, name);
-        contentValues.put(DatabaseHelper.P_TEXT, desc);
-        int i = database.update(DatabaseHelper.P_TABLE_NAME, contentValues, DatabaseHelper.P_ID + " = " + _id, null);
-        return i;
-    }
-
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DatabaseHelper.P_ID, post.getPid());
@@ -145,6 +137,13 @@ public class DBManager {
         database.insert(DatabaseHelper.U_TABLE_NAME, null, contentValue);
     }
 
+    public int update_User(User user, String key, String Value) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(key, Value);
+        int i = database.update(DatabaseHelper.U_TABLE_NAME, contentValues, DatabaseHelper.U_ID + " = '" + user.getuID()+"'", null);
+        return i;
+    }
+
     public User get_User(String uID) {
         return null;
     }
@@ -156,6 +155,7 @@ public class DBManager {
                 new String[]{
                         DatabaseHelper.U_ID,
                         DatabaseHelper.U_HANDLE,
+                        DatabaseHelper.U_PROF_IMG,
                         DatabaseHelper.U_PUB_KEY,
                         DatabaseHelper.U_PRIV_KEY,
                         DatabaseHelper.U_IS_FOLLOW
@@ -170,11 +170,12 @@ public class DBManager {
             do {
                 String uID = res.getString(res.getColumnIndex(DatabaseHelper.U_ID));
                 String uHandle = res.getString(res.getColumnIndex(DatabaseHelper.U_HANDLE));
+                String uProfImg = res.getString(res.getColumnIndex(DatabaseHelper.U_PROF_IMG));
                 String uPubKey = res.getString(res.getColumnIndex(DatabaseHelper.U_PUB_KEY));
                 String uPrivKey = res.getString(res.getColumnIndex(DatabaseHelper.U_PRIV_KEY));
                 Boolean uIsFollow = (res.getInt(res.getColumnIndex(DatabaseHelper.U_IS_FOLLOW)) == 1);
 
-                thisUser = new User(uID, uHandle, uIsFollow, uPubKey);
+                thisUser = new User(uID, uHandle, uIsFollow, uPubKey, uProfImg);
                 thisUser.setPrivateKey(uPrivKey);
                 //Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
             } while (res.moveToNext());
