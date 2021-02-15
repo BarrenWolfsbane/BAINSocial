@@ -20,7 +20,7 @@ import tv.bain.bainsocial.datatypes.User;
 public class DBManager {
 
     private DatabaseHelper dbHelper;
-    private Context context;
+    private final Context context;
     private SQLiteDatabase database;
 
     public DBManager(Context c) {
@@ -90,7 +90,7 @@ public class DBManager {
 
     public Cursor fetch() {
         String[] columns = DatabaseHelper.P_COLUMNS_LIST;
-        return database.query(DatabaseHelper.P_TABLE_NAME, columns,null,null,null,null,DatabaseHelper.P_TIME+" DESC");
+        return database.query(DatabaseHelper.P_TABLE_NAME, columns, null, null, null, null, DatabaseHelper.P_TIME + " DESC");
     }
 
     public void insert_Post(Post post) {
