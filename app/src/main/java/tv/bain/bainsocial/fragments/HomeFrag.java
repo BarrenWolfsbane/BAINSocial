@@ -34,6 +34,7 @@ import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
+import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 import static android.app.Activity.RESULT_OK;
@@ -67,6 +68,7 @@ public class HomeFrag extends Fragment {
 
         vm = new ViewModelProvider(this).get(HomeViewModel.class);
         bindData();
+        observeState();
 
         initiateToolbar();
         initiateDrawer();
@@ -80,6 +82,18 @@ public class HomeFrag extends Fragment {
         b.setLifecycleOwner(getViewLifecycleOwner());
         b.setFrag(this);
         b.recycler.setAdapter(adapter);
+    }
+
+    private void observeState() {
+        vm.getState().observe(getViewLifecycleOwner(), myState -> {
+            if (myState instanceof MyState.FINISHED) {
+                return;
+            }
+            if (myState instanceof MyState.ERROR) {
+                Toast.makeText(requireActivity(), ((MyState.ERROR) myState).getMsg(), Toast.LENGTH_SHORT).show();
+            }
+            vm.setIdleState();
+        });
     }
 
     private void initiateToolbar() {
@@ -139,7 +153,6 @@ public class HomeFrag extends Fragment {
             }
         });
     }
-
 
     private void initiateDrawer() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(requireActivity(), b.drawerLayout, b.toolbar, R.string.openDrawer, R.string.closeDrawer);
@@ -208,6 +221,7 @@ public class HomeFrag extends Fragment {
         NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
         String idText = "ID: " + BAINServer.getInstance().getUser().getuID();
         binding.headerIDText.setText(idText);
+        binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
 
         binding.hvProfileImage.setOnLongClickListener(v -> {
                     launchProfilePicSelectionIntent();
@@ -237,7 +251,7 @@ public class HomeFrag extends Fragment {
         if (resCode != RESULT_OK) return;
 
         if (reqCode == SELECT_PHOTO && data != null) {
-            vm.saveProfileImageToDatabase(data);
+            vm.saveProfileImage(data);
             binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
             //TODO: Update toolbar
         }
