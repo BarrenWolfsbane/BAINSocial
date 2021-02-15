@@ -140,7 +140,7 @@ public class DBManager {
     public int update_User(User user, String key, String Value) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(key, Value);
-        int i = database.update(DatabaseHelper.U_TABLE_NAME, contentValues, DatabaseHelper.U_ID + " = '" + user.getuID()+"'", null);
+        int i = database.update(DatabaseHelper.U_TABLE_NAME, contentValues, DatabaseHelper.U_ID + " = ?", new String[]{user.getuID()});
         return i;
     }
 
