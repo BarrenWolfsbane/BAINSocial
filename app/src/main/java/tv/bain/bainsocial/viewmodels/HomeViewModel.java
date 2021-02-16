@@ -106,8 +106,9 @@ public class HomeViewModel extends AndroidViewModel {
     private void saveImageToDatabase(Texture imgTexture) {
         BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().insert_Image(imgTexture); //adds Image to database
-        BAINServer.getInstance().getUser().setProfileImageID(imgTexture.getUUID()); //sets the User
-        BAINServer.getInstance().getDb().update_User(BAINServer.getInstance().getUser(), DatabaseHelper.U_PROF_IMG, imgTexture.getUUID()); // Updates Database
+        String imgURL = "BAIN://"+ BAINServer.getInstance().getUser().getuID()+":"+imgTexture.getUUID();
+        BAINServer.getInstance().getUser().setProfileImageID(imgURL); //sets the User
+        BAINServer.getInstance().getDb().update_User(BAINServer.getInstance().getUser(), DatabaseHelper.U_PROF_IMG, imgURL); // Updates Database
         BAINServer.getInstance().getDb().close();
     }
 
