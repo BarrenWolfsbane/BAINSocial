@@ -17,11 +17,16 @@ import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.datatypes.User;
 
+import static tv.bain.bainsocial.datatypes.Post.postList;
+import static tv.bain.bainsocial.datatypes.Texture.textureList;
+import static tv.bain.bainsocial.datatypes.User.usrList;
+
 public class DBManager {
 
     private DatabaseHelper dbHelper;
     private final Context context;
     private SQLiteDatabase database;
+    private java.lang.Object Object;
 
     public DBManager(Context c) {
         context = c;
@@ -194,5 +199,56 @@ public class DBManager {
         contentValue.put(DatabaseHelper.I_STRING, image.getImageString());
 
         database.insert(DatabaseHelper.I_TABLE_NAME, null, contentValue);
+    }
+
+    public Object id_Array_Search(String Hash){
+        for (User thisUser : usrList)
+            if (thisUser.getuID().matches(Hash))
+                return thisUser;
+        for (Post thisPost : postList)
+            if (thisPost.getPid().matches(Hash))
+                return thisPost;
+        for (Texture thisTexture : textureList)
+            if (thisTexture.getUUID().matches(Hash))
+                return thisTexture;
+        return null;
+    }
+    public Object id_DB_Search(String hash){
+        Object found = null;
+
+        String[][] searchArray=new String[3][1];
+        searchArray[0][0] = DatabaseHelper.U_TABLE_NAME; searchArray[0][1] = DatabaseHelper.U_ID;
+        searchArray[1][0] = DatabaseHelper.P_TABLE_NAME; searchArray[1][1] = DatabaseHelper.P_ID;
+        searchArray[2][0] = DatabaseHelper.I_TABLE_NAME; searchArray[2][1] = DatabaseHelper.I_ID;
+
+        for (int i = 0; i < searchArray.length; i++) {
+            Cursor res = database.query(searchArray[i][0],
+                    null, searchArray[i][1] + " = ?", new String[]{hash},
+                    null, null, null, "1");
+            if (res.moveToFirst()) {
+                do {
+                    if(searchArray[i][0].equals(DatabaseHelper.U_TABLE_NAME)) {
+                        found = new User();
+                        ((User) found).setuID(res.getString(res.getColumnIndex(DatabaseHelper.U_ID)));
+                        ((User) found).setDisplayName(res.getString(res.getColumnIndex(DatabaseHelper.U_HANDLE)));
+                        ((User) found).setProfileImageID(res.getString(res.getColumnIndex(DatabaseHelper.U_PROF_IMG)));
+                        ((User) found).setPublicKey(res.getString(res.getColumnIndex(DatabaseHelper.U_PUB_KEY)));
+                        ((User) found).setIsFollowing((res.getInt(res.getColumnIndex(DatabaseHelper.U_IS_FOLLOW)) == 1));
+                        return found;
+                    }
+                    else if(searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
+                        found = new Post();
+                        ((Post) found).setPid(res.getString(res.getColumnIndex(DatabaseHelper.P_ID)));
+                        return found;
+                    }
+                    else if(searchArray[i][0].equals(DatabaseHelper.I_TABLE_NAME)) {
+                        found = new Texture();
+                        ((Texture) found).setUUID(res.getString(res.getColumnIndex(DatabaseHelper.I_ID)));
+                        return found;
+                    }
+                } while (res.moveToNext());
+            }
+        }
+        return found;
     }
 }

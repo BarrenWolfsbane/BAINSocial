@@ -13,10 +13,12 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 import tv.bain.bainsocial.backend.BAINServer;
 
 public class Texture implements Serializable {
+    public static ArrayList<Texture> textureList; //this array list is used to store Texture Objects.
     private String UUID; //UUID is a HASH Value of the uploaded image
     public void setUUID(String UUID) {
         this.UUID = UUID;
@@ -32,6 +34,8 @@ public class Texture implements Serializable {
     public String getImageString() {
         return ImageString;
     }
+
+    public Texture(){};
 
     public Texture(String UUID, String ImageString) {
         this.UUID = UUID;

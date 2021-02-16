@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /*
     When a post is started it boots up a Blank Post Object
@@ -19,6 +20,7 @@ import java.io.Serializable;
     This info is then stored in the DB, recalled when your page is visited.
  */
 public class Post implements Serializable {
+    public static ArrayList<Post> postList; //this array list is used to store Post Objects.
 
     public static Integer SHORT280 = 0; //Text Limited to 280 characters Commonly used on Twitter.
     private Integer postType; //Use STATIC Variables to assign a type
