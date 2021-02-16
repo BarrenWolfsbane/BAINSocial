@@ -115,14 +115,8 @@ public class HomeFrag extends Fragment {
         initiateTheSearchView(menu);
 
         MenuItem notificationItem = menu.findItem(R.id.action_notifications);
-        ((ImageBadgeView) notificationItem.getActionView()).setBadgeValue(734);
-        notificationItem.getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BAINServer.getInstance().SendToast("Notifications!");
-
-            }
-        });
+        ((ImageBadgeView) notificationItem.getActionView()).setBadgeValue(0);
+        notificationItem.getActionView().setOnClickListener(v -> BAINServer.getInstance().SendToast("Notifications!"));
     }
 
     private void initiateTheSearchView(Menu menu) {
@@ -172,19 +166,17 @@ public class HomeFrag extends Fragment {
         b.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        b.navView.setNavigationItemSelectedListener(item ->
-                {
-                    if (item.getItemId() == R.id.homeFragItem) {
-                        b.drawerLayout.close();
-                        return true;
-                    }
-                    if (item.getItemId() == R.id.postCreateFragItem) {
-                        goToNewPostFrag();
-                        return true;
-                    }
-                    return false;
+        b.navView.setNavigationItemSelectedListener(item -> {
+                if (item.getItemId() == R.id.homeFragItem) {
+                    b.drawerLayout.close();
+                    return true;
                 }
-        );
+                if (item.getItemId() == R.id.postCreateFragItem) {
+                    goToNewPostFrag();
+                    return true;
+                }
+                return false;
+            });
     }
 
     private void setToolbarIcon() {
@@ -237,9 +229,9 @@ public class HomeFrag extends Fragment {
         binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
 
         binding.hvProfileImage.setOnLongClickListener(v -> {
-                    launchProfilePicSelectionIntent();
-                    return false;
-                }
+                launchProfilePicSelectionIntent();
+                return false;
+            }
         );
     }
 
@@ -269,7 +261,6 @@ public class HomeFrag extends Fragment {
 
             Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(profileImage, 50, 50, true));
             b.toolbar.setNavigationIcon(finalDrawable);
-            //TODO: Update toolbar
         }
     }
 

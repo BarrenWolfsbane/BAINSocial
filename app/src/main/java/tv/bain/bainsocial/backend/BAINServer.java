@@ -127,16 +127,16 @@ public class BAINServer extends Service {
     public void SendToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
-
+    public static int A_USER = 0;
+    public static int A_QUERY = 1;
     public Object Bain_Search(String BAINAddress){
         Object resultObject;
         if(BAINAddress == null) return null;
         if((BAINAddress.substring(0,7)).toLowerCase().contains("bain://")){
             BAINAddress = BAINAddress.substring(7); //strips protocol
             String[] searchArray = BAINAddress.split(":");
-            String address = searchArray[0];
-            String query = searchArray[1];
-            SendToast("BAIN-ADDRESS: "+BAINAddress);
+            String address = searchArray[A_USER];
+            String query = searchArray[A_QUERY];
             /*
                 - Do localized Search of array and DB to see
                 - If we know of this object already Return it.
@@ -166,5 +166,13 @@ public class BAINServer extends Service {
             if(resultObject != null) return resultObject;
         }
         return null;
+    }
+    public static String BAINStrip(String BAINAddress, Integer segment){
+        if((BAINAddress.substring(0,7)).toLowerCase().contains("bain://")) {
+            BAINAddress = BAINAddress.substring(7); //strips protocol
+            String[] searchArray = BAINAddress.split(":");
+            return searchArray[segment];
+        }
+        return "";
     }
 }

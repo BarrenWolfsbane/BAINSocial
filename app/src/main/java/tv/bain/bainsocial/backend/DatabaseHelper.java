@@ -41,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String P_REPLYTO = "replyTo"; // BAIN://uID:pID the user and post this connects to
     public static final String P_ANTITAMPER = "antiTamper"; //a MD5 Hash recalculated every time there os a change in replies
     public static final String P_REPLYLIST = "responseList"; // {<uID:pID>} //User ID and Post ID
+    public static final String P_IMAGELIST = "imageList"; // {<uID:pID>} //User ID and Post ID
     public static final String[] P_COLUMNS_LIST = new String[]{
             DatabaseHelper.P_BLOCKCHAIN,
             DatabaseHelper.P_TYPE,
@@ -51,7 +52,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             DatabaseHelper.P_TIME,
             DatabaseHelper.P_REPLYTO,
             DatabaseHelper.P_ANTITAMPER,
-            DatabaseHelper.P_REPLYLIST
+            DatabaseHelper.P_REPLYLIST,
+            DatabaseHelper.P_IMAGELIST
     };
 
     private static final String CREATE_P_TABLE =
@@ -66,7 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     P_TIME + " TEXT," +
                     P_REPLYTO + " TEXT," +
                     P_ANTITAMPER + " TEXT," +
-                    P_REPLYLIST + " TEXT" +
+                    P_REPLYLIST + " TEXT," +
+                    P_IMAGELIST + " TEXT" +
                     ");";
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

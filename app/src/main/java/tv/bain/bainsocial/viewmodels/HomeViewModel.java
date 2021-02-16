@@ -113,7 +113,6 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public Bitmap getProfileImage() {
-        //TODO: if image is null get it from storage or get the default one
         String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
         BAINServer.getInstance().getDb().open();
         Object searchResult = BAINServer.getInstance().Bain_Search(ImageHash);

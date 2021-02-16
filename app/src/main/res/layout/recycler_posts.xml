@@ -28,7 +28,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/posterImg"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="#FABFBF"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:text="@{post.uid}"
-                app:layout_constraintStart_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toEndOf="@+id/posterImg"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="User" />
 
@@ -55,6 +55,12 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:id="@+id/imageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
 
         <TextView
             android:id="@+id/description"

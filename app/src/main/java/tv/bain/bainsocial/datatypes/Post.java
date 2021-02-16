@@ -32,9 +32,9 @@ public class Post implements Serializable {
     private String[] responseList; // {<uID:pID>} //User ID and Post ID
     private String antiTamper; //a MD5 Hash recalculated every time there os a change in replies
     private String text; //the message Text
+    private String[] images;
 
-    public Post() {
-    }
+    public Post() {}
 
     public Post(JSONObject object) throws JSONException {
         this.pid = object.getString("pID");
@@ -47,6 +47,9 @@ public class Post implements Serializable {
     }
 
     //region Getters and Setters
+    public String[] getImages(){ return images; }
+    public void setImages(String[] images){ this.images = images; }
+
     public static Integer getSHORT280() {
         return SHORT280;
     }

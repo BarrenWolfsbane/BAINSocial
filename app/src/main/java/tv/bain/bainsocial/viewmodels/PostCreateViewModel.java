@@ -1,7 +1,10 @@
 package tv.bain.bainsocial.viewmodels;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.backend.Crypt;
@@ -10,12 +13,15 @@ import tv.bain.bainsocial.utils.MyState;
 
 import static java.lang.System.currentTimeMillis;
 
-public class PostCreateViewModel extends ViewModel {
+public class PostCreateViewModel extends AndroidViewModel {
 
     private String postDescription = "";
     private final MutableLiveData<MyState> state = new MutableLiveData<>(MyState.IDLE.INSTANCE);
 
-    //region Getter and Setter methods
+    public PostCreateViewModel(@NonNull Application application) {
+        super(application);
+    }
+
     public String getPostDescription() {
         return postDescription;
     }
@@ -27,7 +33,6 @@ public class PostCreateViewModel extends ViewModel {
     public MutableLiveData<MyState> getState() {
         return state;
     }
-    //endregion
 
     public void submitPost() {
         state.postValue(new MyState.LOADING());
@@ -40,9 +45,6 @@ public class PostCreateViewModel extends ViewModel {
         thisPost.setTimeCreated(currentTimeMillis());
         thisPost.setPid(Crypt.md5(postDescription));
 
-        //thisPost.setReplyTo();
-        //thisPost.setAntiTamper();
-
         if (postDescription.trim().isEmpty()) {
             state.postValue(new MyState.ERROR("Please add a description to your post"));
             return;
@@ -52,11 +54,9 @@ public class PostCreateViewModel extends ViewModel {
         BAINServer.getInstance().getDb().insert_Post(thisPost);
         BAINServer.getInstance().getDb().close();
         state.postValue(new MyState.FINISHED());
-
     }
 
     public void setIdleState() {
         state.postValue(MyState.IDLE.INSTANCE);
     }
-
 }

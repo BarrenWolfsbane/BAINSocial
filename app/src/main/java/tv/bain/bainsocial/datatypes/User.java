@@ -76,8 +76,7 @@ public class User implements Serializable {
     public String getProfileImageID(){ return profileImageID; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    public User() {
-    }
+    public User() {}
     public User(JSONObject object){
         try {
             this.uID = object.getString("uID");

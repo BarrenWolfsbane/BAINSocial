@@ -149,10 +149,6 @@ public class DBManager {
         return i;
     }
 
-    public User get_User(String uID) {
-        return null;
-    }
-
     public User get_User_By_Hash(ICallback cb, String hash) {
         User thisUser = null;
         Cursor res = database.query(
