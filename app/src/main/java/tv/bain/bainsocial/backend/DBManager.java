@@ -202,12 +202,6 @@ public class DBManager {
     }
 
     public Object array_ID_Search(String Hash){
-        //Check for array, if not initialized, we do so now
-
-        if(usrList == null) User.usrList = new ArrayList<>();
-        if(postList == null) Post.postList = new ArrayList<>();
-        if(textureList == null) Texture.textureList = new ArrayList<>();
-
         for (User thisUser : usrList)
             if (thisUser.getuID().matches(Hash))
                 return thisUser;

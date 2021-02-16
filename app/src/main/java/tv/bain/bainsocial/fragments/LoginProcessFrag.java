@@ -13,10 +13,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.util.ArrayList;
+
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.databinding.LoginProcessFragmentBinding;
+import tv.bain.bainsocial.datatypes.Post;
+import tv.bain.bainsocial.datatypes.Texture;
+import tv.bain.bainsocial.datatypes.User;
 import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.LoginProcessViewModel;
+
+import static tv.bain.bainsocial.datatypes.Post.postList;
+import static tv.bain.bainsocial.datatypes.Texture.textureList;
+import static tv.bain.bainsocial.datatypes.User.usrList;
 
 public class LoginProcessFrag extends Fragment {
 

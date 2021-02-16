@@ -115,12 +115,8 @@ public class HomeViewModel extends AndroidViewModel {
         //TODO: if image is null get it from storage or get the default one
         String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
         BAINServer.getInstance().getDb().open();
-        Object imageObject = BAINServer.getInstance().getDb().array_ID_Search(ImageHash);
-        if(imageObject != null) profileImage = Texture.base64StringToBitMap(((Texture)imageObject).getImageString());
-        else{
-            imageObject = BAINServer.getInstance().getDb().db_ID_Search(ImageHash);
-            if(imageObject != null) profileImage = Texture.base64StringToBitMap(((Texture)imageObject).getImageString());
-        }
+        Object searchResult = BAINServer.getInstance().Bain_Search(ImageHash);
+        if(searchResult != null) profileImage = Texture.base64StringToBitMap(((Texture)searchResult).getImageString());
         return profileImage;
     }
 }

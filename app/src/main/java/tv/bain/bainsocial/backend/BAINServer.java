@@ -5,8 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import tv.bain.bainsocial.R;
+import tv.bain.bainsocial.datatypes.Post;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.datatypes.User;
+
+import static tv.bain.bainsocial.datatypes.Post.postList;
+import static tv.bain.bainsocial.datatypes.Texture.textureList;
+import static tv.bain.bainsocial.datatypes.User.usrList;
 
 public class BAINServer extends Service {
 
@@ -19,7 +27,6 @@ public class BAINServer extends Service {
     public static boolean isInstanceCreated() {
         return instance != null;
     }
-
 
     /* Stored User */
     private User user;
@@ -88,6 +95,10 @@ public class BAINServer extends Service {
 
         NotificationMan.createNotification(getApplicationContext(), R.drawable.ic_launcher_foreground, "BAIN Services", "Running in Background, Click to Access App");
 
+        if(usrList == null) User.usrList = new ArrayList<>();
+        if(postList == null) Post.postList = new ArrayList<>();
+        if(textureList == null) Texture.textureList = new ArrayList<>();
+
         //SendToast("Ding");
         return mStartMode;
     }
@@ -112,12 +123,47 @@ public class BAINServer extends Service {
         instance = null;
     } // The service is no longer used and is being destroyed
 
-    //endregion
-
     //region Notice region
     public void SendToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
-    //endregion
+    public Object Bain_Search(String BAINAddress){
+        Object resultObject;
+        if(BAINAddress == null) return null;
+        if(BAINAddress.toLowerCase().contains("bain://")){
+            String searchData = BAINAddress.replace("bain://","");
+            String[] searchArray = searchData.split(":");
+            String address = searchArray[0];
+            String query = searchArray[1];
+            /*
+                - Do localized Search of array and DB to see
+                - If we know of this object already Return it.
+            */
+            resultObject = BAINServer.getInstance().getDb().array_ID_Search(query);
+            if(resultObject != null) return resultObject;
+            resultObject = BAINServer.getInstance().getDb().db_ID_Search(query);
+            if(resultObject != null) return resultObject;
+            /*
+                - Query Failed to produce results since return didn't trigger
+                - Get the Directory Info from the Database
+                - Send a message via HTTP to the address listed to have them preform search
+            */
+            Object addressObject = BAINServer.getInstance().getDb().array_ID_Search(address);
+            if(addressObject == null) addressObject = BAINServer.getInstance().getDb().db_ID_Search(address);
+            if(addressObject != null){
+                //use the directory information in the new object to send a message to the user to query the data
+            }
+            else {
+                //No Address info found for the user Send a network broadcast to all other known users to do a search
+            }
+        }
+        else {
+            resultObject = BAINServer.getInstance().getDb().array_ID_Search(BAINAddress);
+            if(resultObject != null) return resultObject;
+            resultObject = BAINServer.getInstance().getDb().db_ID_Search(BAINAddress);
+            if(resultObject != null) return resultObject;
+        }
+        return null;
+    }
 }
