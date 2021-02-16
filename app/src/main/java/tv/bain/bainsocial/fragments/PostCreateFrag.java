@@ -1,6 +1,7 @@
 package tv.bain.bainsocial.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.PostCreateFragmentBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.PostCreateViewModel;
 
@@ -88,6 +90,10 @@ public class PostCreateFrag extends Fragment {
     }
 
     public void submitPost() {
+        //Gather Image Data here
+        b.imageCreateContainer.getChildCount();
+
+
         vm.submitPost();
     }
 
@@ -119,15 +125,11 @@ public class PostCreateFrag extends Fragment {
         if (resCode != RESULT_OK) return;
         if (reqCode == SELECT_PHOTO && data != null) {
 
-            //vm.saveProfileImage(data);
-            //Bitmap profileImage = vm.getProfileImage();
-            //binding.hvProfileImage.setImageBitmap(profileImage);
-
-            //Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(profileImage, 50, 50, true));
-            //b.toolbar.setNavigationIcon(finalDrawable);
-            ImageView newImage = null;
-            //newImage.setImageBitmap();
-            //b.PostingLayoutScrollView.addView();
+            Texture thisTexture =  vm.saveAndGetImage(data);
+            Bitmap postImage = Texture.base64StringToBitMap(thisTexture.getImageString());
+            ImageView imageView = new ImageView(getContext());
+            imageView.setImageBitmap(postImage);
+            b.imageCreateContainer.addView(imageView);
         }
     }
 }
