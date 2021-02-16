@@ -131,11 +131,12 @@ public class BAINServer extends Service {
     public Object Bain_Search(String BAINAddress){
         Object resultObject;
         if(BAINAddress == null) return null;
-        if(BAINAddress.toLowerCase().contains("bain://")){
-            String searchData = BAINAddress.replace("bain://","");
-            String[] searchArray = searchData.split(":");
+        if((BAINAddress.substring(0,7)).toLowerCase().contains("bain://")){
+            BAINAddress = BAINAddress.substring(7); //strips protocol
+            String[] searchArray = BAINAddress.split(":");
             String address = searchArray[0];
             String query = searchArray[1];
+            SendToast("BAIN-ADDRESS: "+BAINAddress);
             /*
                 - Do localized Search of array and DB to see
                 - If we know of this object already Return it.
@@ -151,7 +152,7 @@ public class BAINServer extends Service {
             */
             Object addressObject = BAINServer.getInstance().getDb().array_ID_Search(address);
             if(addressObject == null) addressObject = BAINServer.getInstance().getDb().db_ID_Search(address);
-            if(addressObject != null){
+            if(addressObject != null) {
                 //use the directory information in the new object to send a message to the user to query the data
             }
             else {

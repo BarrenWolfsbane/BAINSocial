@@ -29,11 +29,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
+import ru.nikartm.support.ImageBadgeView;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
@@ -111,6 +113,16 @@ public class HomeFrag extends Fragment {
         inflater.inflate(R.menu.posts_toolbar_menu, menu);
 
         initiateTheSearchView(menu);
+
+        MenuItem notificationItem = menu.findItem(R.id.action_notifications);
+        ((ImageBadgeView) notificationItem.getActionView()).setBadgeValue(734);
+        notificationItem.getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BAINServer.getInstance().SendToast("Notifications!");
+
+            }
+        });
     }
 
     private void initiateTheSearchView(Menu menu) {
@@ -170,11 +182,6 @@ public class HomeFrag extends Fragment {
                         goToNewPostFrag();
                         return true;
                     }
-                    /*
-                    if(item.getItemId() == R.id.online_Mode_Seek) {
-                        b.navView.getMenu().getItem(8).getSubMenu().getItem(1).setTitle("true");
-                    }
-                    */
                     return false;
                 }
         );
@@ -185,9 +192,15 @@ public class HomeFrag extends Fragment {
         //TODO: create a resized drawable and add it to resources
         Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.f810049d4e3320ba053d1dca055d4764676451fc, null);
         if (drawable == null) return;
-
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
+
+        String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
+        BAINServer.getInstance().getDb().open();
+        Object searchResult = BAINServer.getInstance().Bain_Search(ImageHash);
+        BAINServer.getInstance().getDb().close();
+        if(searchResult != null) bitmap = Texture.base64StringToBitMap(((Texture)searchResult).getImageString());
+
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 130, 130, true));
         b.toolbar.setNavigationIcon(finalDrawable);
     }
 
@@ -249,7 +262,6 @@ public class HomeFrag extends Fragment {
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
         if (resCode != RESULT_OK) return;
-
         if (reqCode == SELECT_PHOTO && data != null) {
             vm.saveProfileImage(data);
             binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
