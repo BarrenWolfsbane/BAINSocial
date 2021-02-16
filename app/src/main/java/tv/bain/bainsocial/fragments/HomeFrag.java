@@ -200,7 +200,7 @@ public class HomeFrag extends Fragment {
         BAINServer.getInstance().getDb().close();
         if(searchResult != null) bitmap = Texture.base64StringToBitMap(((Texture)searchResult).getImageString());
 
-        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 130, 130, true));
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
         b.toolbar.setNavigationIcon(finalDrawable);
     }
 
