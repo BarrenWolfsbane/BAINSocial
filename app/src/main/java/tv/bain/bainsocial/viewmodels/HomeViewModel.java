@@ -22,6 +22,8 @@ import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
 
+import static tv.bain.bainsocial.datatypes.Texture.textureList;
+
 public class HomeViewModel extends AndroidViewModel {
 
     private Bitmap profileImage;
@@ -58,6 +60,7 @@ public class HomeViewModel extends AndroidViewModel {
 
             profileImage = Texture.base64StringToBitMap(imgTexture.getImageString());
             saveImageToDatabase(imgTexture);
+            textureList.add(imgTexture);
         } catch (IOException e) {
             state.postValue(new MyState.ERROR(e.getLocalizedMessage()));
         }
@@ -110,6 +113,14 @@ public class HomeViewModel extends AndroidViewModel {
 
     public Bitmap getProfileImage() {
         //TODO: if image is null get it from storage or get the default one
+        String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
+        BAINServer.getInstance().getDb().open();
+        Object imageObject = BAINServer.getInstance().getDb().array_ID_Search(ImageHash);
+        if(imageObject != null) profileImage = Texture.base64StringToBitMap(((Texture)imageObject).getImageString());
+        else{
+            imageObject = BAINServer.getInstance().getDb().db_ID_Search(ImageHash);
+            if(imageObject != null) profileImage = Texture.base64StringToBitMap(((Texture)imageObject).getImageString());
+        }
         return profileImage;
     }
 }

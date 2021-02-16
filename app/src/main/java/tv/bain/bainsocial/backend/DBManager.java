@@ -201,7 +201,13 @@ public class DBManager {
         database.insert(DatabaseHelper.I_TABLE_NAME, null, contentValue);
     }
 
-    public Object id_Array_Search(String Hash){
+    public Object array_ID_Search(String Hash){
+        //Check for array, if not initialized, we do so now
+
+        if(usrList == null) User.usrList = new ArrayList<>();
+        if(postList == null) Post.postList = new ArrayList<>();
+        if(textureList == null) Texture.textureList = new ArrayList<>();
+
         for (User thisUser : usrList)
             if (thisUser.getuID().matches(Hash))
                 return thisUser;
@@ -213,10 +219,10 @@ public class DBManager {
                 return thisTexture;
         return null;
     }
-    public Object id_DB_Search(String hash){
+    public Object db_ID_Search(String hash){
         Object found = null;
 
-        String[][] searchArray=new String[3][1];
+        String[][] searchArray=new String[3][2];
         searchArray[0][0] = DatabaseHelper.U_TABLE_NAME; searchArray[0][1] = DatabaseHelper.U_ID;
         searchArray[1][0] = DatabaseHelper.P_TABLE_NAME; searchArray[1][1] = DatabaseHelper.P_ID;
         searchArray[2][0] = DatabaseHelper.I_TABLE_NAME; searchArray[2][1] = DatabaseHelper.I_ID;
@@ -234,16 +240,26 @@ public class DBManager {
                         ((User) found).setProfileImageID(res.getString(res.getColumnIndex(DatabaseHelper.U_PROF_IMG)));
                         ((User) found).setPublicKey(res.getString(res.getColumnIndex(DatabaseHelper.U_PUB_KEY)));
                         ((User) found).setIsFollowing((res.getInt(res.getColumnIndex(DatabaseHelper.U_IS_FOLLOW)) == 1));
+                        usrList.add(((User) found));
                         return found;
                     }
                     else if(searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
                         found = new Post();
+                        ((Post) found).setPostType(res.getInt(res.getColumnIndex(DatabaseHelper.P_TYPE)));
                         ((Post) found).setPid(res.getString(res.getColumnIndex(DatabaseHelper.P_ID)));
+                        ((Post) found).setPid(res.getString(res.getColumnIndex(DatabaseHelper.P_UID)));
+                        ((Post) found).setText(res.getString(res.getColumnIndex(DatabaseHelper.P_TEXT)));
+                        ((Post) found).setTimeCreated(res.getLong(res.getColumnIndex(DatabaseHelper.P_TIME)));
+                        ((Post) found).setReplyTo(res.getString(res.getColumnIndex(DatabaseHelper.P_REPLYTO)));
+                        ((Post) found).setAntiTamper(res.getString(res.getColumnIndex(DatabaseHelper.P_ANTITAMPER)));
+                        postList.add(((Post) found));
                         return found;
                     }
                     else if(searchArray[i][0].equals(DatabaseHelper.I_TABLE_NAME)) {
                         found = new Texture();
                         ((Texture) found).setUUID(res.getString(res.getColumnIndex(DatabaseHelper.I_ID)));
+                        ((Texture) found).setImageStringD(res.getString(res.getColumnIndex(DatabaseHelper.I_STRING)));
+                        textureList.add(((Texture) found));
                         return found;
                     }
                 } while (res.moveToNext());
