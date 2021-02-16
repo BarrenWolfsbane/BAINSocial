@@ -264,7 +264,11 @@ public class HomeFrag extends Fragment {
         if (resCode != RESULT_OK) return;
         if (reqCode == SELECT_PHOTO && data != null) {
             vm.saveProfileImage(data);
-            binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
+            Bitmap profileImage = vm.getProfileImage();
+            binding.hvProfileImage.setImageBitmap(profileImage);
+
+            Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(profileImage, 50, 50, true));
+            b.toolbar.setNavigationIcon(finalDrawable);
             //TODO: Update toolbar
         }
     }
