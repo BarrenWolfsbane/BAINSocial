@@ -26,16 +26,10 @@ import static tv.bain.bainsocial.datatypes.User.usrList;
 public class DBManager {
 
     private DatabaseHelper dbHelper;
-    private final Context context;
     private SQLiteDatabase database;
-    private java.lang.Object Object;
 
-    public DBManager(Context c) {
-        context = c;
-    }
-
-    public DBManager open() throws SQLException {
-        dbHelper = new DatabaseHelper(context);
+    public DBManager open(Context ctx) throws SQLException {
+        dbHelper = new DatabaseHelper(ctx);
         database = dbHelper.getWritableDatabase();
         return this;
     }
@@ -102,7 +96,8 @@ public class DBManager {
 
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
-        if(post.getBlockChainTXN() != null) contentValue.put(DatabaseHelper.P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
+        if (post.getBlockChainTXN() != null)
+            contentValue.put(DatabaseHelper.P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
         contentValue.put(DatabaseHelper.P_ID, post.getPid());
         contentValue.put(DatabaseHelper.P_UID, post.getUid());
         contentValue.put(DatabaseHelper.P_TYPE, post.getPostType());
@@ -110,8 +105,10 @@ public class DBManager {
         contentValue.put(DatabaseHelper.P_REPLYTO, post.getReplyTo());
         contentValue.put(DatabaseHelper.P_TEXT, post.getText());
         contentValue.put(DatabaseHelper.P_ANTITAMPER, post.getAntiTamper());
-        if(post.getResponseList() != null) contentValue.put(DatabaseHelper.P_REPLYLIST, convertArrayToString(post.getResponseList()));
-        if(post.getImages() != null) contentValue.put(DatabaseHelper.P_IMAGELIST, convertArrayToString(post.getImages()));
+        if (post.getResponseList() != null)
+            contentValue.put(DatabaseHelper.P_REPLYLIST, convertArrayToString(post.getResponseList()));
+        if (post.getImages() != null)
+            contentValue.put(DatabaseHelper.P_IMAGELIST, convertArrayToString(post.getImages()));
         database.insert(DatabaseHelper.P_TABLE_NAME, null, contentValue);
     }
 
@@ -127,8 +124,8 @@ public class DBManager {
 
         do {
             Post post = new Post();
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))) != null)
-            post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))) != null)
+                post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
 
             post.setPostType(cur.getInt(cur.getColumnIndex(DatabaseHelper.P_TYPE)));
             post.setPid(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ID)));
@@ -138,11 +135,11 @@ public class DBManager {
             post.setReplyTo(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYTO)));
             post.setAntiTamper(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ANTITAMPER)));
 
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))) != null)
-            post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))) != null)
+                post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
 
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))) != null)
-            post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))) != null)
+                post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
 
             arr.add(post);
         } while (cur.moveToNext());
@@ -220,7 +217,7 @@ public class DBManager {
         database.insert(DatabaseHelper.I_TABLE_NAME, null, contentValue);
     }
 
-    public Object array_ID_Search(String Hash){
+    public Object array_ID_Search(String Hash) {
         for (User thisUser : usrList)
             if (thisUser.getuID().matches(Hash))
                 return thisUser;
@@ -232,13 +229,17 @@ public class DBManager {
                 return thisTexture;
         return null;
     }
-    public Object db_ID_Search(String hash){
+
+    public Object db_ID_Search(String hash) {
         Object found = null;
 
-        String[][] searchArray=new String[3][2];
-        searchArray[0][0] = DatabaseHelper.U_TABLE_NAME; searchArray[0][1] = DatabaseHelper.U_ID;
-        searchArray[1][0] = DatabaseHelper.P_TABLE_NAME; searchArray[1][1] = DatabaseHelper.P_ID;
-        searchArray[2][0] = DatabaseHelper.I_TABLE_NAME; searchArray[2][1] = DatabaseHelper.I_ID;
+        String[][] searchArray = new String[3][2];
+        searchArray[0][0] = DatabaseHelper.U_TABLE_NAME;
+        searchArray[0][1] = DatabaseHelper.U_ID;
+        searchArray[1][0] = DatabaseHelper.P_TABLE_NAME;
+        searchArray[1][1] = DatabaseHelper.P_ID;
+        searchArray[2][0] = DatabaseHelper.I_TABLE_NAME;
+        searchArray[2][1] = DatabaseHelper.I_ID;
 
         for (int i = 0; i < searchArray.length; i++) {
             Cursor res = database.query(searchArray[i][0],
@@ -246,7 +247,7 @@ public class DBManager {
                     null, null, null, "1");
             if (res.moveToFirst()) {
                 do {
-                    if(searchArray[i][0].equals(DatabaseHelper.U_TABLE_NAME)) {
+                    if (searchArray[i][0].equals(DatabaseHelper.U_TABLE_NAME)) {
                         found = new User();
                         ((User) found).setuID(res.getString(res.getColumnIndex(DatabaseHelper.U_ID)));
                         ((User) found).setDisplayName(res.getString(res.getColumnIndex(DatabaseHelper.U_HANDLE)));
@@ -255,8 +256,7 @@ public class DBManager {
                         ((User) found).setIsFollowing((res.getInt(res.getColumnIndex(DatabaseHelper.U_IS_FOLLOW)) == 1));
                         usrList.add(((User) found));
                         return found;
-                    }
-                    else if(searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
+                    } else if (searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
                         found = new Post();
                         ((Post) found).setBlockChainTXN(convertStringToArrayList(res.getString(res.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
                         ((Post) found).setPostType(res.getInt(res.getColumnIndex(DatabaseHelper.P_TYPE)));
@@ -272,8 +272,7 @@ public class DBManager {
 
                         postList.add(((Post) found));
                         return found;
-                    }
-                    else if(searchArray[i][0].equals(DatabaseHelper.I_TABLE_NAME)) {
+                    } else if (searchArray[i][0].equals(DatabaseHelper.I_TABLE_NAME)) {
                         found = new Texture();
                         ((Texture) found).setUUID(res.getString(res.getColumnIndex(DatabaseHelper.I_ID)));
                         ((Texture) found).setImageStringD(res.getString(res.getColumnIndex(DatabaseHelper.I_STRING)));
