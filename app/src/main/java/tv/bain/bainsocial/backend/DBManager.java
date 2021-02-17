@@ -18,7 +18,7 @@ import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.datatypes.User;
 
 import static tv.bain.bainsocial.backend.DatabaseHelper.convertArrayToString;
-import static tv.bain.bainsocial.backend.DatabaseHelper.convertStringToArray;
+import static tv.bain.bainsocial.backend.DatabaseHelper.convertStringToArrayList;
 import static tv.bain.bainsocial.datatypes.Post.postList;
 import static tv.bain.bainsocial.datatypes.Texture.textureList;
 import static tv.bain.bainsocial.datatypes.User.usrList;
@@ -127,9 +127,23 @@ public class DBManager {
 
         do {
             Post post = new Post();
-            post.setText(cur.getString(5));
-            post.setTimeCreated(cur.getLong(6));
-            post.setUid(cur.getString(3));
+            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))) != null)
+            post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
+
+            post.setPostType(cur.getInt(cur.getColumnIndex(DatabaseHelper.P_TYPE)));
+            post.setPid(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ID)));
+            post.setUid(cur.getString(cur.getColumnIndex(DatabaseHelper.P_UID)));
+            post.setText(cur.getString(cur.getColumnIndex(DatabaseHelper.P_TEXT)));
+            post.setTimeCreated(cur.getLong(cur.getColumnIndex(DatabaseHelper.P_TIME)));
+            post.setReplyTo(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYTO)));
+            post.setAntiTamper(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ANTITAMPER)));
+
+            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))) != null)
+            post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
+
+            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))) != null)
+            post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
+
             arr.add(post);
         } while (cur.moveToNext());
 
@@ -240,7 +254,7 @@ public class DBManager {
                     }
                     else if(searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
                         found = new Post();
-                        ((Post) found).setBlockChainTXN(convertStringToArray(res.getString(res.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
+                        ((Post) found).setBlockChainTXN(convertStringToArrayList(res.getString(res.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
                         ((Post) found).setPostType(res.getInt(res.getColumnIndex(DatabaseHelper.P_TYPE)));
                         ((Post) found).setPid(res.getString(res.getColumnIndex(DatabaseHelper.P_ID)));
                         ((Post) found).setUid(res.getString(res.getColumnIndex(DatabaseHelper.P_UID)));
@@ -248,8 +262,8 @@ public class DBManager {
                         ((Post) found).setTimeCreated(res.getLong(res.getColumnIndex(DatabaseHelper.P_TIME)));
                         ((Post) found).setReplyTo(res.getString(res.getColumnIndex(DatabaseHelper.P_REPLYTO)));
                         ((Post) found).setAntiTamper(res.getString(res.getColumnIndex(DatabaseHelper.P_ANTITAMPER)));
-                        ((Post) found).setResponseList(convertStringToArray(res.getString(res.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
-                        ((Post) found).setImages(convertStringToArray(res.getString(res.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
+                        ((Post) found).setResponseList(convertStringToArrayList(res.getString(res.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
+                        ((Post) found).setImages(convertStringToArrayList(res.getString(res.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
 
 
                         postList.add(((Post) found));

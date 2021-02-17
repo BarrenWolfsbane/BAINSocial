@@ -1,5 +1,6 @@
 package tv.bain.bainsocial.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -17,7 +18,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 import tv.bain.bainsocial.databinding.PostCreateFragmentBinding;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
@@ -90,11 +95,8 @@ public class PostCreateFrag extends Fragment {
     }
 
     public void submitPost() {
-        //Gather Image Data here
-        b.imageCreateContainer.getChildCount();
 
-
-        vm.submitPost();
+        vm.submitPost(b.getTextureHashs());
     }
 
     public void goBackToHomeFrag() {
@@ -121,11 +123,18 @@ public class PostCreateFrag extends Fragment {
         startActivityForResult(chooser, SELECT_PHOTO);
     }
 
+    @SuppressLint("ShowToast")
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         if (resCode != RESULT_OK) return;
         if (reqCode == SELECT_PHOTO && data != null) {
-
             Texture thisTexture =  vm.saveAndGetImage(data);
+
+            List<String> imgList = new ArrayList<String>();
+            String textureHashes = b.getTextureHashs();
+            if(textureHashes != null) imgList = DatabaseHelper.convertStringToArrayList(textureHashes);
+            imgList.add(thisTexture.getUUID());
+            b.setTextureHashs(DatabaseHelper.convertArrayToString(imgList));
+
             Bitmap postImage = Texture.base64StringToBitMap(thisTexture.getImageString());
             ImageView imageView = new ImageView(getContext());
             imageView.setImageBitmap(postImage);

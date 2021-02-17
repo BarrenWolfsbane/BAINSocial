@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
     When a post is started it boots up a Blank Post Object
@@ -21,18 +22,17 @@ import java.util.ArrayList;
  */
 public class Post implements Serializable {
     public static ArrayList<Post> postList; //this array list is used to store Post Objects.
-
     public static Integer SHORT280 = 0; //Text Limited to 280 characters Commonly used on Twitter.
     private Integer postType; //Use STATIC Variables to assign a type
-    private String[] blockChainTXN; // this array will contain any blockchain txns where this post can be found.
+    private List<String> blockChainTXN; // this array will contain any blockchain txns where this post can be found.
     private String uid; //MD5 Of Author
     private String pid; //Unique MD5 hash Identifying this post Based on the following criteria. Images+Text
     private long timeCreated; // UTC time currentTimeMillis()
     private String replyTo; // BAIN://uID:pID //the user and post this connects to
-    private String[] responseList; // {<uID:pID>} //User ID and Post ID
+    private List<String> responseList; // {<uID:pID>} //User ID and Post ID
     private String antiTamper; //a MD5 Hash recalculated every time there os a change in replies
     private String text; //the message Text
-    private String[] images;
+    private List<String> images;
 
     public Post() {}
 
@@ -47,8 +47,8 @@ public class Post implements Serializable {
     }
 
     //region Getters and Setters
-    public String[] getImages(){ return images; }
-    public void setImages(String[] images){ this.images = images; }
+    public List<String> getImages(){ return images; }
+    public void setImages(List<String> images){ this.images = images; }
 
     public static Integer getSHORT280() {
         return SHORT280;
@@ -66,11 +66,11 @@ public class Post implements Serializable {
         this.postType = postType;
     }
 
-    public String[] getBlockChainTXN() {
+    public List<String> getBlockChainTXN() {
         return blockChainTXN;
     }
 
-    public void setBlockChainTXN(String[] blockChainTXN) {
+    public void setBlockChainTXN(List<String> blockChainTXN) {
         this.blockChainTXN = blockChainTXN;
     }
 
@@ -106,11 +106,11 @@ public class Post implements Serializable {
         this.replyTo = replyTo;
     }
 
-    public String[] getResponseList() {
+    public List<String> getResponseList() {
         return responseList;
     }
 
-    public void setResponseList(String[] responseList) {
+    public void setResponseList(List<String> responseList) {
         this.responseList = responseList;
     }
 

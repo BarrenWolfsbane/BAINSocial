@@ -1,5 +1,6 @@
 package tv.bain.bainsocial.adapters;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -67,18 +68,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.Holder> {
             }
 
             //Setup the Images for the post
-            String[] postImages = post.getImages();
+            List<String> postImages = post.getImages();
             if(postImages != null) {
                 for (String imageString : postImages) {
                     Texture image = (Texture) BAINServer.getInstance().Bain_Search(imageString);
-                    ImageView newImage = null;
-                     newImage.setImageBitmap(Texture.base64StringToBitMap(image.getImageString()));
-                    b.imageContainer.addView(newImage);
+                    if(image != null) {
+                        Bitmap postImage = Texture.base64StringToBitMap(image.getImageString());
+                        ImageView imageView = new ImageView(b.imageContainer.getContext());
+                        imageView.setImageBitmap(postImage);
+                        b.imageContainer.addView(imageView);
+                    }
                 }
             }
-
             b.setPost(post);
-
             b.executePendingBindings();
         }
     }

@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     static final int DB_VERSION = 1;
     static final String DB_NAME = "BAINSOCIAL.DB";
@@ -120,19 +124,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static String strSeparator = ",";
-    public static String convertArrayToString(String[] array){
+    public static String convertArrayToString(List<String> array){
         String str = "";
-        for (int i = 0;i<array.length; i++) {
-            str = str+array[i];
+        for (int i = 0;i<array.size(); i++) {
+            str = str+array.get(i);
             // Do not append comma at the end of last element
-            if(i<array.length-1){
+            if(i<array.size()-1){
                 str = str+strSeparator;
             }
         }
         return str;
     }
-    public static String[] convertStringToArray(String str){
-        String[] arr = str.split(strSeparator);
+    public static List<String> convertStringToArrayList(String data){
+        List<String> arr = new ArrayList<String>(Arrays.asList(data.split(strSeparator)));
         return arr;
     }
 }

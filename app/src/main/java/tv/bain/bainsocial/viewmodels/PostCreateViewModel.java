@@ -13,9 +13,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.backend.Crypt;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
@@ -44,27 +47,33 @@ public class PostCreateViewModel extends AndroidViewModel {
         return state;
     }
 
-    public void submitPost() {
+    public void submitPost(String textureHashes) {
         state.postValue(new MyState.LOADING());
         Post thisPost = new Post();
+        BAINServer.getInstance().SendToast("Compiling Post");
 
         String authorData = BAINServer.getInstance().getUser().getuID();
         thisPost.setPostType(Post.SHORT280);
         thisPost.setUid(authorData);
         thisPost.setText(postDescription);
         thisPost.setTimeCreated(currentTimeMillis());
-        thisPost.setPid(Crypt.md5(postDescription));
-
+        thisPost.setPid(Crypt.md5(currentTimeMillis()+postDescription)); //has time and post to make ID
         if (postDescription.trim().isEmpty()) {
             state.postValue(new MyState.ERROR("Please add a description to your post"));
             return;
         }
-        //Cycle through each view in the thingy
-        //get the images in each create a string for those
-        //Put that string in thisPost
+        thisPost.setResponseList(null);
+        thisPost.setBlockChainTXN(null);
 
-
-       // b.imageCreateContainer.getChildCount();
+        ArrayList<String> tempImgList = new ArrayList<String>();
+        List<String> imgList = new ArrayList<String>();
+        if(textureHashes != null){
+            imgList = DatabaseHelper.convertStringToArrayList(textureHashes);
+            for(String hash : imgList){
+                tempImgList.add("BAIN://"+BAINServer.getInstance().getUser().getuID()+":"+hash);
+            }
+            thisPost.setImages(tempImgList);
+        }
 
         BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().insert_Post(thisPost);
@@ -75,7 +84,6 @@ public class PostCreateViewModel extends AndroidViewModel {
     public void setIdleState() {
         state.postValue(MyState.IDLE.INSTANCE);
     }
-
 
     public Texture saveAndGetImage(Intent data) {
         String imgPath = getSelectedImagePath(data.getData());
