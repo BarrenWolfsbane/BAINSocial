@@ -1,14 +1,17 @@
 package tv.bain.bainsocial.viewmodels;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import tv.bain.bainsocial.ICallback;
 import tv.bain.bainsocial.backend.BAINServer;
 import tv.bain.bainsocial.backend.Crypt;
 import tv.bain.bainsocial.utils.MyState;
 
-public class LoginProcessViewModel extends ViewModel implements ICallback {
+public class LoginProcessViewModel extends AndroidViewModel implements ICallback {
 
     private final MutableLiveData<MyState> state = new MutableLiveData<>(new MyState.LOADING());
 
@@ -17,6 +20,10 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
     private final MutableLiveData<String> keyDataProgress = new MutableLiveData<>("");
 
     private String loginPass;
+
+    public LoginProcessViewModel(@NonNull Application application) {
+        super(application);
+    }
 
     //region Getter and Setter methods
     public MutableLiveData<MyState> getState() {
@@ -50,14 +57,13 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
         BAINServer.getInstance().getUser().setHashedPass(hashedPass);
 
         stepOneProgress.postValue("Hash: " + hashedPass);
-        BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().get_User_By_Hash(this, hashedPass); /* Sends back to loginKeyCallback */
-        BAINServer.getInstance().getDb().close();
     }
 
     @Override
     public void loginHashCallback(int count) {
-        if (BAINServer.getInstance().getUser().getuID() == null) stepOneProgress.postValue("User Not Found");
+        if (BAINServer.getInstance().getUser().getuID() == null)
+            stepOneProgress.postValue("User Not Found");
         else stepOneProgress.postValue("Complete");
     }
 
@@ -68,8 +74,7 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
             if (checkLoginToken()) {
                 //We need to get the full user info Including the UID
                 state.postValue(new MyState.FINISHED());
-            }
-            else state.postValue(new MyState.ERROR());
+            } else state.postValue(new MyState.ERROR());
         } else { //Passphrase did not show up in database
             stepTwoProgress.postValue("DB Entry Not Found");
             //TODO: If Database entry not found we check for files. and create User from it if we find it

@@ -171,16 +171,16 @@ public class HomeFrag extends Fragment {
 
 
         b.navView.setNavigationItemSelectedListener(item -> {
-                if (item.getItemId() == R.id.homeFragItem) {
-                    b.drawerLayout.close();
-                    return true;
-                }
-                if (item.getItemId() == R.id.postCreateFragItem) {
-                    goToNewPostFrag();
-                    return true;
-                }
-                return false;
-            });
+            if (item.getItemId() == R.id.homeFragItem) {
+                b.drawerLayout.close();
+                return true;
+            }
+            if (item.getItemId() == R.id.postCreateFragItem) {
+                goToNewPostFrag();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void setToolbarIcon() {
@@ -191,10 +191,10 @@ public class HomeFrag extends Fragment {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
         String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
-        BAINServer.getInstance().getDb().open();
         Object searchResult = BAINServer.getInstance().Bain_Search(ImageHash);
-        BAINServer.getInstance().getDb().close();
-        if(searchResult != null) bitmap = Texture.base64StringToBitMap(((Texture)searchResult).getImageString());
+        if (searchResult != null) {
+            bitmap = Texture.base64StringToBitMap(((Texture) searchResult).getImageString());
+        }
 
         Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
         b.toolbar.setNavigationIcon(finalDrawable);
@@ -261,9 +261,9 @@ public class HomeFrag extends Fragment {
         binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
 
         binding.hvProfileImage.setOnLongClickListener(v -> {
-                launchProfilePicSelectionIntent();
-                return false;
-            }
+                    launchProfilePicSelectionIntent();
+                    return false;
+                }
         );
     }
 

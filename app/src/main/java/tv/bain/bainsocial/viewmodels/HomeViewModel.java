@@ -4,11 +4,11 @@ import android.app.Application;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -44,10 +44,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public List<Post> getAllLocalPosts() {
-        BAINServer.getInstance().getDb().open();
-        List<Post> list = BAINServer.getInstance().getDb().get_Recent_Posts_Local();
-        BAINServer.getInstance().getDb().close();
-        return list;
+        return BAINServer.getInstance().getDb().get_Recent_Posts_Local();
     }
 
     public void saveProfileImage(Intent data) {
@@ -104,17 +101,14 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     private void saveImageToDatabase(Texture imgTexture) {
-        BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().insert_Image(imgTexture); //adds Image to database
         String imgURL = "BAIN://"+ BAINServer.getInstance().getUser().getuID()+":"+imgTexture.getUUID();
         BAINServer.getInstance().getUser().setProfileImageID(imgURL); //sets the User
         BAINServer.getInstance().getDb().update_User(BAINServer.getInstance().getUser(), DatabaseHelper.U_PROF_IMG, imgURL); // Updates Database
-        BAINServer.getInstance().getDb().close();
     }
 
     public Bitmap getProfileImage() {
         String ImageHash = BAINServer.getInstance().getUser().getProfileImageID();
-        BAINServer.getInstance().getDb().open();
         Object searchResult = BAINServer.getInstance().Bain_Search(ImageHash);
         if(searchResult != null) profileImage = Texture.base64StringToBitMap(((Texture)searchResult).getImageString());
         return profileImage;
