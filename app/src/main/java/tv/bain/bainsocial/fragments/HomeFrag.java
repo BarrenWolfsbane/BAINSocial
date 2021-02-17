@@ -33,16 +33,14 @@ import ru.nikartm.support.ImageBadgeView;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.adapters.PostsAdapter;
 import tv.bain.bainsocial.backend.BAINServer;
-import tv.bain.bainsocial.backend.Crypt;
 import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
-import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
+import tv.bain.bainsocial.utils.Utils;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 import static android.app.Activity.RESULT_OK;
-import static java.lang.System.currentTimeMillis;
 
 public class HomeFrag extends Fragment {
 
@@ -224,11 +222,16 @@ public class HomeFrag extends Fragment {
         });
 
         MenuItem testButton = sm.findItem(R.id.testButton);
+
+        String isConnected;
+        if(BAINServer.getInstance().getBr().isNetworkConnected()) isConnected = "Network Connected";
+        else isConnected = "Network not Connected";
+        testButton.setTitle(isConnected);
+
         testButton.setOnMenuItemClickListener(v -> {
             String testString = BAINServer.getInstance().getUser().toJSON().toString();
-
-            testButton.setTitle("Test Button Pressed");
-
+            testButton.setTitle("Test:"+Utils.getIPAddress(false));
+            /*
             BAINServer.getInstance().SendToast("Test:"+testString);
 
             Post thisPost = new Post();
@@ -242,7 +245,7 @@ public class HomeFrag extends Fragment {
             BAINServer.getInstance().getDb().insert_Post(thisPost);
             BAINServer.getInstance().getDb().close();
             testButton.setTitle(testString);
-
+            */
             return false;
         });
     }

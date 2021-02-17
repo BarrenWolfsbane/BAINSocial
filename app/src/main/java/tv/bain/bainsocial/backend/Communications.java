@@ -1,6 +1,11 @@
 package tv.bain.bainsocial.backend;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -9,12 +14,42 @@ import java.net.Socket;
 
 
 
-public class Communications {
+public class Communications extends BroadcastReceiver {
     private Context context;
     public Communications(Context c) {
         context = c;
     }
     private ServerSocket serverSocket;
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
+        if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
+            if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
+                //do stuff
+                /*
+                Check the IP agains tthe one currently listed in the directory for you, Do this for ipv4 and ipv6
+                if there was a change update the Directory and send out a packet of data to each user you know
+                 */
+
+            } else {
+                // wifi connection was lost
+            }
+        }
+    }
+    public boolean isConnectedViaWifi() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mWifi.isConnected();
+    }
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+    public Communications(){}
+
+
+
 
     private static int[] CommonlyBlockedPorts = {
             0,      // is a reserved port, which means it should not be used by applications. Network abuse has prompted the need to block this port.	IPv4/IPv6
@@ -48,13 +83,4 @@ public class Communications {
             return false;
         }
     }
-    /*
-    public static JSONObject obj2JSONObj(Object obj){
-
-        JSONArray arr = new JSONObject(result).getJSONArray("objects");
-    }
-    public static Object JSONObj2Obj(Object obj){
-
-        JSONArray arr = new JSONObject(result).getJSONArray("objects");
-    }*/
 }

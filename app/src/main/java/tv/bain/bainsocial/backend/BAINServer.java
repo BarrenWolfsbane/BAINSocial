@@ -2,6 +2,8 @@ package tv.bain.bainsocial.backend;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -55,8 +57,16 @@ public class BAINServer extends Service {
         return fc;
     }
 
-    public void setFC(FileControls fc) {
-        this.fc = fc;
+    public void setFC(FileControls fc) { this.fc = fc; }
+
+    private Communications br;
+
+    public Communications getBr() {
+        return br;
+    }
+
+    public void setBr(Communications Br) {
+        this.br = br;
     }
 
 
@@ -72,6 +82,12 @@ public class BAINServer extends Service {
         BAINServer.getInstance().setDB(new DBManager(getApplicationContext()));
         BAINServer.getInstance().setFC(new FileControls(getApplicationContext()));
         BAINServer.getInstance().setUser(new User());
+        br = new Communications(this);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+        registerReceiver(br, intentFilter);
+
         NotificationMan.initiate(getApplicationContext());
     }
 
@@ -120,6 +136,7 @@ public class BAINServer extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(br);
         instance = null;
     } // The service is no longer used and is being destroyed
 
