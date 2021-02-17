@@ -27,10 +27,12 @@
 
     <item
         android:id="@+id/subItemsItem"
-        android:title="Sub items">
+        android:title="Sub Items">
         <menu>
             <group android:checkableBehavior="single">
-                <item android:title="Sub item 1" />
+                <item
+                    android:id="@+id/testButton"
+                    android:title="Test Button"/>
                 <item
                     android:id="@+id/online_Mode_Seek"
                     android:title="Data Mode: Offline"

@@ -7,6 +7,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
+
 public class Communications {
     private Context context;
     public Communications(Context c) {
@@ -46,4 +48,13 @@ public class Communications {
             return false;
         }
     }
+    /*
+    public static JSONObject obj2JSONObj(Object obj){
+
+        JSONArray arr = new JSONObject(result).getJSONArray("objects");
+    }
+    public static Object JSONObj2Obj(Object obj){
+
+        JSONArray arr = new JSONObject(result).getJSONArray("objects");
+    }*/
 }

@@ -60,11 +60,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.Holder> {
 
             //Setup the Profile Image
             User poster = (User)BAINServer.getInstance().Bain_Search(post.getUid());
-            String profileImgID = poster.getProfileImageID();
-            if(profileImgID != null) {
-                String textureID = BAINServer.BAINStrip(profileImgID, BAINServer.A_QUERY);
-                Texture profimage = (Texture) BAINServer.getInstance().Bain_Search(textureID);
-                b.posterImg.setImageBitmap(Texture.base64StringToBitMap(profimage.getImageString()));
+            if(poster != null) {
+                String profileImgID = poster.getProfileImageID();
+                if(profileImgID != null) {
+                    String textureID = BAINServer.BAINStrip(profileImgID, BAINServer.A_QUERY);
+                    Texture profimage = (Texture) BAINServer.getInstance().Bain_Search(textureID);
+                    b.posterImg.setImageBitmap(Texture.base64StringToBitMap(profimage.getImageString()));
+                }
             }
 
             //Setup the Images for the post

@@ -50,7 +50,6 @@ public class PostCreateViewModel extends AndroidViewModel {
     public void submitPost(String textureHashes) {
         state.postValue(new MyState.LOADING());
         Post thisPost = new Post();
-        BAINServer.getInstance().SendToast("Compiling Post");
 
         String authorData = BAINServer.getInstance().getUser().getuID();
         thisPost.setPostType(Post.SHORT280);
