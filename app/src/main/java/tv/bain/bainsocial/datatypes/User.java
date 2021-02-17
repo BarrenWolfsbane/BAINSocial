@@ -81,9 +81,10 @@ public class User implements Serializable {
     public User(JSONObject object){
         try {
             this.uID = object.getString(DatabaseHelper.U_ID);
-            this.DisplayName = object.getString("DisplayName");
-            this.isFollowing = object.getBoolean("isFollowing");
-            this.PublicKey = object.getString("PublicKey");
+            this.isFollowing = object.getBoolean(DatabaseHelper.U_IS_FOLLOW);
+            this.DisplayName = object.getString(DatabaseHelper.U_HANDLE);
+            this.profileImageID = object.getString(DatabaseHelper.U_PROF_IMG);
+            this.PublicKey = object.getString(DatabaseHelper.U_PUB_KEY);
         } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
     }
     public User(String uID, String DisplayName,Boolean isFollowing,String PublicKey,String profileImageID) {

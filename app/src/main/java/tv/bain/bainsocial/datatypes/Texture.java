@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.util.Base64;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +19,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 
 public class Texture implements Serializable {
     public static ArrayList<Texture> textureList; //this array list is used to store Texture Objects.
@@ -36,6 +40,13 @@ public class Texture implements Serializable {
     }
 
     public Texture(){};
+
+    public Texture(JSONObject object){
+        try {
+            this.UUID = object.getString(DatabaseHelper.I_ID);
+            this.ImageString = object.getString(DatabaseHelper.I_STRING);
+        } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
+    }
 
     public Texture(String UUID, String ImageString) {
         this.UUID = UUID;
@@ -139,5 +150,15 @@ public class Texture implements Serializable {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    public JSONObject toJSON(){
+        JSONObject jo = new JSONObject();
+        try {
+            jo.put(DatabaseHelper.I_ID, UUID);
+            jo.put(DatabaseHelper.I_STRING, ImageString);
+        }
+        catch (JSONException e) { e.printStackTrace(); }
+        return jo;
     }
 }
