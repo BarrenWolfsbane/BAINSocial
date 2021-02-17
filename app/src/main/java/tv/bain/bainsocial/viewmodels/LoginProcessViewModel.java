@@ -50,9 +50,7 @@ public class LoginProcessViewModel extends ViewModel implements ICallback {
         BAINServer.getInstance().getUser().setHashedPass(hashedPass);
 
         stepOneProgress.postValue("Hash: " + hashedPass);
-        BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().get_User_By_Hash(this, hashedPass); /* Sends back to loginKeyCallback */
-        BAINServer.getInstance().getDb().close();
     }
 
     @Override

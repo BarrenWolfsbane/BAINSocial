@@ -39,6 +39,7 @@ public class ServerBootingFrag extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ServerBootingViewModel.class);
         startService();
+        BAINServer.getInstance().getDb().open(requireActivity().getApplicationContext());
         goToPermissionsFrag();
     }
 

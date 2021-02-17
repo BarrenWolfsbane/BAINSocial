@@ -50,9 +50,7 @@ public class PostCreateViewModel extends AndroidViewModel {
             return;
         }
 
-        BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().insert_Post(thisPost);
-        BAINServer.getInstance().getDb().close();
         state.postValue(new MyState.FINISHED());
     }
 

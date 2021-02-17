@@ -69,7 +69,7 @@ public class BAINServer extends Service {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BAINServer.getInstance().setDB(new DBManager(getApplicationContext()));
+        BAINServer.getInstance().setDB(new DBManager());
         BAINServer.getInstance().setFC(new FileControls(getApplicationContext()));
         BAINServer.getInstance().setUser(new User());
         NotificationMan.initiate(getApplicationContext());
@@ -163,7 +163,7 @@ public class BAINServer extends Service {
             resultObject = BAINServer.getInstance().getDb().array_ID_Search(BAINAddress);
             if(resultObject != null) return resultObject;
             resultObject = BAINServer.getInstance().getDb().db_ID_Search(BAINAddress);
-            if(resultObject != null) return resultObject;
+            return resultObject;
         }
         return null;
     }
