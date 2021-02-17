@@ -209,10 +209,14 @@ public class DBManager {
     }
 
     public void insert_Image(Texture image) {
+        Cursor res = database.query(DatabaseHelper.I_TABLE_NAME,
+                null, DatabaseHelper.I_ID + " = ?", new String[]{image.getUUID()},
+                null, null, null, "1");
+        if (res.moveToFirst()) return;
+
         ContentValues contentValue = new ContentValues();
         contentValue.put(DatabaseHelper.I_ID, image.getUUID());
         contentValue.put(DatabaseHelper.I_STRING, image.getImageString());
-
         database.insert(DatabaseHelper.I_TABLE_NAME, null, contentValue);
     }
 
