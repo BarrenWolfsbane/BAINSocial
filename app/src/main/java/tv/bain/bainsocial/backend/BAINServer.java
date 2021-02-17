@@ -2,6 +2,8 @@ package tv.bain.bainsocial.backend;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -55,8 +57,16 @@ public class BAINServer extends Service {
         return fc;
     }
 
-    public void setFC(FileControls fc) {
-        this.fc = fc;
+    public void setFC(FileControls fc) { this.fc = fc; }
+
+    private Communications br;
+
+    public Communications getBr() {
+        return br;
+    }
+
+    public void setBr(Communications Br) {
+        this.br = br;
     }
 
 
@@ -64,15 +74,6 @@ public class BAINServer extends Service {
     int mStartMode = START_STICKY;       // indicates how to behave if the service is killed
     IBinder mBinder;                     // interface for clients that bind
     boolean mAllowRebind;                // indicates whether onRebind should be used
-
-    public static String BAINStrip(String BAINAddress, Integer segment) {
-        if ((BAINAddress.substring(0, 7)).toLowerCase().contains("bain://")) {
-            BAINAddress = BAINAddress.substring(7); //strips protocol
-            String[] searchArray = BAINAddress.split(":");
-            return searchArray[segment];
-        }
-        return "";
-    }
 
     @Override
     public void onCreate() {
@@ -83,8 +84,11 @@ public class BAINServer extends Service {
         BAINServer.getInstance().setFC(new FileControls(getApplicationContext()));
         BAINServer.getInstance().setUser(new User());
         BAINServer.getInstance().getDb().open(getApplicationContext());
+        br = new Communications(this);
 
-        NotificationMan.createNotification(getApplicationContext(), R.drawable.bainsocialscreen3, "BAIN Services", "onCreate method executed");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+        registerReceiver(br, intentFilter);
 
     }
 
@@ -114,6 +118,12 @@ public class BAINServer extends Service {
 
         return mStartMode;
     }
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(br);
+        BAINServer.getInstance().getDb().close();
+        instance = null;
+    } // The service is no longer used and is being destroyed
 
     //region Notice region
     public void SendToast(String msg) {
@@ -123,17 +133,10 @@ public class BAINServer extends Service {
     public static int A_USER = 0;
     public static int A_QUERY = 1;
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        BAINServer.getInstance().getDb().close();
-        instance = null;
-    } // The service is no longer used and is being destroyed
-
-    public Object Bain_Search(String BAINAddress) {
+    public Object Bain_Search(String BAINAddress){
         Object resultObject;
-        if (BAINAddress == null) return null;
-        if ((BAINAddress.substring(0, 7)).toLowerCase().contains("bain://")) {
+        if(BAINAddress == null) return null;
+        if((BAINAddress.substring(0,7)).toLowerCase().contains("bain://")){
             BAINAddress = BAINAddress.substring(7); //strips protocol
             String[] searchArray = BAINAddress.split(":");
             String address = searchArray[A_USER];
@@ -143,28 +146,37 @@ public class BAINServer extends Service {
                 - If we know of this object already Return it.
             */
             resultObject = BAINServer.getInstance().getDb().array_ID_Search(query);
-            if (resultObject != null) return resultObject;
+            if(resultObject != null) return resultObject;
             resultObject = BAINServer.getInstance().getDb().db_ID_Search(query);
-            if (resultObject != null) return resultObject;
+            if(resultObject != null) return resultObject;
             /*
                 - Query Failed to produce results since return didn't trigger
                 - Get the Directory Info from the Database
                 - Send a message via HTTP to the address listed to have them preform search
             */
             Object addressObject = BAINServer.getInstance().getDb().array_ID_Search(address);
-            if (addressObject == null)
-                addressObject = BAINServer.getInstance().getDb().db_ID_Search(address);
-            if (addressObject != null) {
+            if(addressObject == null) addressObject = BAINServer.getInstance().getDb().db_ID_Search(address);
+            if(addressObject != null) {
                 //use the directory information in the new object to send a message to the user to query the data
-            } else {
+            }
+            else {
                 //No Address info found for the user Send a network broadcast to all other known users to do a search
             }
-        } else {
+        }
+        else {
             resultObject = BAINServer.getInstance().getDb().array_ID_Search(BAINAddress);
-            if (resultObject != null) return resultObject;
+            if(resultObject != null) return resultObject;
             resultObject = BAINServer.getInstance().getDb().db_ID_Search(BAINAddress);
-            return resultObject;
+            if(resultObject != null) return resultObject;
         }
         return null;
+    }
+    public static String BAINStrip(String BAINAddress, Integer segment){
+        if((BAINAddress.substring(0,7)).toLowerCase().contains("bain://")) {
+            BAINAddress = BAINAddress.substring(7); //strips protocol
+            String[] searchArray = BAINAddress.split(":");
+            return searchArray[segment];
+        }
+        return "";
     }
 }

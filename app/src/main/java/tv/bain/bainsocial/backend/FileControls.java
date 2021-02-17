@@ -61,7 +61,6 @@ public class FileControls {
         else return (fileContent.toString()).getBytes();
     }
 
-    //Key File Operations
     public boolean keyChecker(User me) {
         this.me = me;
         return privKeyFile.exists();

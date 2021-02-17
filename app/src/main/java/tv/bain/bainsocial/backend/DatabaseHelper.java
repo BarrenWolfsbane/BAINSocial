@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     static final int DB_VERSION = 1;
     static final String DB_NAME = "BAINSOCIAL.DB";
@@ -39,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String P_TEXT = "text";
     public static final String P_TIME = "createTime";  // UTC time currentTimeMillis()
     public static final String P_REPLYTO = "replyTo"; // BAIN://uID:pID the user and post this connects to
-    public static final String P_ANTITAMPER = "antiTamper"; //a MD5 Hash recalculated every time there os a change in replies
+    public static final String P_ANTITAMPER = "antiTamper"; //a MD5 Hash recalculated every time there is a change in replies
     public static final String P_REPLYLIST = "responseList"; // {<uID:pID>} //User ID and Post ID
     public static final String P_IMAGELIST = "imageList"; // {<uID:pID>} //User ID and Post ID
     public static final String[] P_COLUMNS_LIST = new String[]{
@@ -117,5 +121,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + D_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + I_TABLE_NAME);
         onCreate(db);
+    }
+
+    public static String strSeparator = ",";
+    public static String convertArrayToString(List<String> array){
+        String str = "";
+        for (int i = 0;i<array.size(); i++) {
+            str = str+array.get(i);
+            // Do not append comma at the end of last element
+            if(i<array.size()-1){
+                str = str+strSeparator;
+            }
+        }
+        return str;
+    }
+    public static List<String> convertStringToArrayList(String data){
+        List<String> arr = new ArrayList<String>(Arrays.asList(data.split(strSeparator)));
+        return arr;
     }
 }

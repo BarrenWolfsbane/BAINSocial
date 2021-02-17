@@ -1,6 +1,8 @@
 package tv.bain.bainsocial.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -16,8 +18,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 import tv.bain.bainsocial.databinding.PostCreateFragmentBinding;
+import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
 import tv.bain.bainsocial.viewmodels.PostCreateViewModel;
 
@@ -88,7 +95,8 @@ public class PostCreateFrag extends Fragment {
     }
 
     public void submitPost() {
-        vm.submitPost();
+
+        vm.submitPost(b.getTextureHashs());
     }
 
     public void goBackToHomeFrag() {
@@ -115,19 +123,22 @@ public class PostCreateFrag extends Fragment {
         startActivityForResult(chooser, SELECT_PHOTO);
     }
 
+    @SuppressLint("ShowToast")
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         if (resCode != RESULT_OK) return;
         if (reqCode == SELECT_PHOTO && data != null) {
+            Texture thisTexture =  vm.saveAndGetImage(data);
 
-            //vm.saveProfileImage(data);
-            //Bitmap profileImage = vm.getProfileImage();
-            //binding.hvProfileImage.setImageBitmap(profileImage);
+            List<String> imgList = new ArrayList<String>();
+            String textureHashes = b.getTextureHashs();
+            if(textureHashes != null) imgList = DatabaseHelper.convertStringToArrayList(textureHashes);
+            imgList.add(thisTexture.getUUID());
+            b.setTextureHashs(DatabaseHelper.convertArrayToString(imgList));
 
-            //Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(profileImage, 50, 50, true));
-            //b.toolbar.setNavigationIcon(finalDrawable);
-            ImageView newImage = null;
-            //newImage.setImageBitmap();
-            //b.PostingLayoutScrollView.addView();
+            Bitmap postImage = Texture.base64StringToBitMap(thisTexture.getImageString());
+            ImageView imageView = new ImageView(getContext());
+            imageView.setImageBitmap(postImage);
+            b.imageCreateContainer.addView(imageView);
         }
     }
 }

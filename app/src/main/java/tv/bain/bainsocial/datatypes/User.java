@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.crypto.SecretKey;
 
 import tv.bain.bainsocial.backend.BAINServer;
+import tv.bain.bainsocial.backend.DatabaseHelper;
 
 public class User implements Serializable {
     public static ArrayList<User> usrList; //this array list is used to store User Objects.
@@ -79,10 +80,11 @@ public class User implements Serializable {
     public User() {}
     public User(JSONObject object){
         try {
-            this.uID = object.getString("uID");
-            this.DisplayName = object.getString("DisplayName");
-            this.isFollowing = object.getBoolean("isFollowing");
-            this.PublicKey = object.getString("PublicKey");
+            this.uID = object.getString(DatabaseHelper.U_ID);
+            this.isFollowing = object.getBoolean(DatabaseHelper.U_IS_FOLLOW);
+            this.DisplayName = object.getString(DatabaseHelper.U_HANDLE);
+            this.profileImageID = object.getString(DatabaseHelper.U_PROF_IMG);
+            this.PublicKey = object.getString(DatabaseHelper.U_PUB_KEY);
         } catch (JSONException e) { BAINServer.getInstance().SendToast(e.getMessage()); }
     }
     public User(String uID, String DisplayName,Boolean isFollowing,String PublicKey,String profileImageID) {
@@ -91,5 +93,18 @@ public class User implements Serializable {
         this.profileImageID = profileImageID;
         this.isFollowing = isFollowing;
         this.PublicKey = PublicKey;
+    }
+
+    public JSONObject toJSON(){
+        JSONObject jo = new JSONObject();
+        try {
+            jo.put(DatabaseHelper.U_ID, uID);
+            jo.put(DatabaseHelper.U_IS_FOLLOW, isFollowing);
+            jo.put(DatabaseHelper.U_HANDLE, DisplayName);
+            jo.put(DatabaseHelper.U_PROF_IMG, profileImageID);
+            jo.put(DatabaseHelper.U_PUB_KEY, PublicKey);
+        }
+        catch (JSONException e) { e.printStackTrace(); }
+        return jo;
     }
 }

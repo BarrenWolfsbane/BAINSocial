@@ -37,6 +37,7 @@ import tv.bain.bainsocial.databinding.HomeFragmentBinding;
 import tv.bain.bainsocial.databinding.NavHeaderBinding;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.utils.MyState;
+import tv.bain.bainsocial.utils.Utils;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 import static android.app.Activity.RESULT_OK;
@@ -166,6 +167,7 @@ public class HomeFrag extends Fragment {
         b.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+
         b.navView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.homeFragItem) {
                 b.drawerLayout.close();
@@ -217,6 +219,34 @@ public class HomeFrag extends Fragment {
                     connectionModeTxt.setTitle("Data Mode: Online");
                     break;
             }
+        });
+
+        MenuItem testButton = sm.findItem(R.id.testButton);
+
+        String isConnected;
+        if(BAINServer.getInstance().getBr().isNetworkConnected()) isConnected = "Network Connected";
+        else isConnected = "Network not Connected";
+        testButton.setTitle(isConnected);
+
+        testButton.setOnMenuItemClickListener(v -> {
+            String testString = BAINServer.getInstance().getUser().toJSON().toString();
+            testButton.setTitle("Test:"+Utils.getIPAddress(false));
+            /*
+            BAINServer.getInstance().SendToast("Test:"+testString);
+
+            Post thisPost = new Post();
+            thisPost.setUid("SYSTEM - DEBUG");
+            thisPost.setPostType(Post.SHORT280);
+            thisPost.setText(testString);
+            thisPost.setTimeCreated(currentTimeMillis());
+            thisPost.setPid(Crypt.md5(currentTimeMillis()+testString)); //has time and post to make ID
+
+            BAINServer.getInstance().getDb().open();
+            BAINServer.getInstance().getDb().insert_Post(thisPost);
+            BAINServer.getInstance().getDb().close();
+            testButton.setTitle(testString);
+            */
+            return false;
         });
     }
 
