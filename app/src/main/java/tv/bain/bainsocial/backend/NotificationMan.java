@@ -3,12 +3,10 @@ package tv.bain.bainsocial.backend;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 
 import androidx.annotation.DrawableRes;
 import androidx.core.app.NotificationCompat;
 
-import tv.bain.bainsocial.MainActivity;
 import tv.bain.bainsocial.R;
 import tv.bain.bainsocial.utils.Version;
 
@@ -52,9 +50,6 @@ public class NotificationMan {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         if (longText == null || longText.isEmpty()) mBuilder.setStyle(null);
-
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(ctx, MainActivity.class); //must be the main activity as defined in Manifest
 
         NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 

@@ -8,13 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Communications {
-    private Context context;
-    public Communications(Context c) {
-        context = c;
-    }
-    private ServerSocket serverSocket;
-
-    private static int[] CommonlyBlockedPorts = {
+    private static final int[] CommonlyBlockedPorts = {
             0,      // is a reserved port, which means it should not be used by applications. Network abuse has prompted the need to block this port.	IPv4/IPv6
             25,     //TCP	SMTP	Both	Port 25 is unsecured, and Botnet spammers can use it to send spam. This does not affect Xfinity Connect usage. We recommend learning more about configuring your email settings to Comcast email to use port 587.	IPv4/IPv6
             67,     //UDP	BOOTP, DHCP	Downstream	UDP Port 67, which is used to obtain dynamic Internet Protocol (IP) address information from our dynamic host configuration protocol (DHCP) server, is vulnerable to malicious hacks.	IPv4
@@ -30,14 +24,21 @@ public class Communications {
             1080,   //TCP	SOCKS	Downstream	Port 1080 is vulnerable to, among others, viruses, worms and DoS attacks.	IPv4/IPv6
             1900    //UDP	SSDP	Both	Port 1900 is vulnerable to DoS attacks.	IPv4/IPv6};
     };
+
+    public Communications(Context c) {
+        context = c;
+    }
+
+    private ServerSocket serverSocket;
+    private final Context context;
+
     public static boolean portChecker(final String ip, final int port, final int timeout) {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(ip, port), timeout);
             socket.close();
             return true;
-        }
-        catch(ConnectException ce){
+        } catch (ConnectException ce) {
             ce.printStackTrace();
             return false;
         }
