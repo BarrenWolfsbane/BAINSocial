@@ -285,4 +285,26 @@ public class DBManager {
         }
         return found;
     }
+
+    public String[] directory_Search(String hash){
+        Cursor res = database.query(DatabaseHelper.D_TABLE_NAME, null,
+                DatabaseHelper.D_UID + " = ?", //Where Clause
+                new String[]{hash}, null, null, null);
+        if (!res.moveToFirst()) return null;
+        String[] address = new String[3];
+        do {
+            address[res.getColumnIndex(DatabaseHelper.D_UID)] = res.getString(res.getColumnIndex(DatabaseHelper.D_UID));
+            address[res.getColumnIndex(DatabaseHelper.D_PUB_ADDRESS)] = res.getString(res.getColumnIndex(DatabaseHelper.D_PUB_ADDRESS));
+            address[res.getColumnIndex(DatabaseHelper.D_PORT)] = res.getString(res.getColumnIndex(DatabaseHelper.D_PORT));
+        } while (res.moveToNext());
+
+        return address;
+    }
+    public void directory_Insert(String hash, String address, String port){
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(DatabaseHelper.D_UID, hash);
+        contentValue.put(DatabaseHelper.D_PUB_ADDRESS, address);
+        contentValue.put(DatabaseHelper.D_PORT, port);
+        database.insert(DatabaseHelper.D_TABLE_NAME, null, contentValue);
+    }
 }

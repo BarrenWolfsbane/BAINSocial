@@ -12,6 +12,9 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import tv.bain.bainsocial.utils.Utils;
+
+import static tv.bain.bainsocial.utils.Utils.getPublicIPAddress;
 
 
 public class Communications extends BroadcastReceiver {
@@ -21,6 +24,12 @@ public class Communications extends BroadcastReceiver {
     }
     private ServerSocket serverSocket;
 
+    public String yourIP(){
+        //TODO: We will create a function to send back the connected users public IP address to them
+        //To help replace the getIP address dependency above
+        return "";
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
@@ -28,14 +37,29 @@ public class Communications extends BroadcastReceiver {
             if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
                 //do stuff
                 /*
-                Check the IP agains tthe one currently listed in the directory for you, Do this for ipv4 and ipv6
+                Check the IP against the one currently listed in the directory for you, Do this for ipv4 and ipv6
                 if there was a change update the Directory and send out a packet of data to each user you know
                  */
-
+                AddressUpdate();
             } else {
                 // wifi connection was lost
             }
         }
+    }
+    public void AddressUpdate(){
+        String IP2Use = "";
+        String AddressIPv4 = Utils.getIPAddress(true);
+        String AddressIPv6 = Utils.getIPAddress(false);
+
+        if(!AddressIPv6.equals("")) IP2Use = AddressIPv4;
+        else IP2Use = AddressIPv6;
+
+        IP2Use = getPublicIPAddress();
+        //using IP2Use
+        //Object obj = BAINServer.getInstance().getDb().directory_Search(BAINServer.getInstance().getUser().getuID());
+        BAINServer.getInstance().getDb().directory_Insert(
+                "USER",
+                IP2Use, "80");
     }
     public boolean isConnectedViaWifi() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -47,9 +71,6 @@ public class Communications extends BroadcastReceiver {
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
     public Communications(){}
-
-
-
 
     private static int[] CommonlyBlockedPorts = {
             0,      // is a reserved port, which means it should not be used by applications. Network abuse has prompted the need to block this port.	IPv4/IPv6
@@ -67,6 +88,7 @@ public class Communications extends BroadcastReceiver {
             1080,   //TCP	SOCKS	Downstream	Port 1080 is vulnerable to, among others, viruses, worms and DoS attacks.	IPv4/IPv6
             1900    //UDP	SSDP	Both	Port 1900 is vulnerable to DoS attacks.	IPv4/IPv6};
     };
+
     public static boolean portChecker(final String ip, final int port, final int timeout) {
         try {
             Socket socket = new Socket();

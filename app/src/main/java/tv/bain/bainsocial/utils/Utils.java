@@ -1,7 +1,24 @@
 package tv.bain.bainsocial.utils;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 //import org.apache.http.conn.util.InetAddressUtils;
 
 public class Utils {
@@ -119,5 +136,39 @@ public class Utils {
         } catch (Exception ignored) { } // for now eat exceptions
         return "";
     }
-
+    public static String getPublicIPAddress(){ //We will have it ask other nodes on the network later instead of this site
+        String value = null;
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Future<String> result = es.submit(new Callable<String>() {
+            public String call() throws Exception {
+                try {
+                    URL url = new URL("http://whatismyip.akamai.com/");
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    try {
+                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                        BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                        StringBuilder total = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            total.append(line).append('\n');
+                        }
+                        urlConnection.disconnect();
+                        return total.toString();
+                    }finally {
+                        urlConnection.disconnect();
+                    }
+                }catch (IOException e){
+                    Log.e("Public IP: ",e.getMessage());
+                }
+                return null;
+            }
+        });
+        try {
+            value = result.get();
+        } catch (Exception e) {
+            // failed
+        }
+        es.shutdown();
+        return value;
+    }
 }

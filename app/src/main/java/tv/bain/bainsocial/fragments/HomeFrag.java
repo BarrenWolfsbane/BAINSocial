@@ -78,6 +78,8 @@ public class HomeFrag extends Fragment {
         setToolbarIcon();
         initiateTrisStateSwitch();
         setNavHeader();
+
+        BAINServer.getInstance().getBr().AddressUpdate();
     }
 
     private void bindData() {
