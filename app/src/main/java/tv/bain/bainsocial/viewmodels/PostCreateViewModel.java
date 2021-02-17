@@ -4,11 +4,11 @@ import android.app.Application;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -56,7 +56,7 @@ public class PostCreateViewModel extends AndroidViewModel {
         thisPost.setUid(authorData);
         thisPost.setText(postDescription);
         thisPost.setTimeCreated(currentTimeMillis());
-        thisPost.setPid(Crypt.md5(currentTimeMillis()+postDescription)); //has time and post to make ID
+        thisPost.setPid(Crypt.md5(currentTimeMillis() + postDescription)); //has time and post to make ID
         if (postDescription.trim().isEmpty()) {
             state.postValue(new MyState.ERROR("Please add a description to your post"));
             return;
@@ -66,10 +66,10 @@ public class PostCreateViewModel extends AndroidViewModel {
 
         ArrayList<String> tempImgList = new ArrayList<String>();
         List<String> imgList = new ArrayList<String>();
-        if(textureHashes != null){
+        if (textureHashes != null) {
             imgList = DatabaseHelper.convertStringToArrayList(textureHashes);
-            for(String hash : imgList){
-                tempImgList.add("BAIN://"+BAINServer.getInstance().getUser().getuID()+":"+hash);
+            for (String hash : imgList) {
+                tempImgList.add("BAIN://" + BAINServer.getInstance().getUser().getuID() + ":" + hash);
             }
             thisPost.setImages(tempImgList);
         }
@@ -93,9 +93,12 @@ public class PostCreateViewModel extends AndroidViewModel {
             saveImageToDatabase(imgTexture);
             textureList.add(imgTexture);
             return imgTexture;
-        } catch (IOException e) { state.postValue(new MyState.ERROR(e.getLocalizedMessage())); }
+        } catch (IOException e) {
+            state.postValue(new MyState.ERROR(e.getLocalizedMessage()));
+        }
         return null;
     }
+
     private String getSelectedImagePath(Uri selectedImage) {
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = getApplication().getApplicationContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -106,6 +109,7 @@ public class PostCreateViewModel extends AndroidViewModel {
         cursor.close();
         return imgPath;
     }
+
     private Texture createTextureFromBitmap(String imgPath) throws IOException {
         int intendedSize = 150;
         int orientation; //variable stored to figure out if Orientation is at an angle
@@ -131,9 +135,8 @@ public class PostCreateViewModel extends AndroidViewModel {
 
         return new Texture(UUID, base64Thumbnail);
     }
+
     private void saveImageToDatabase(Texture imgTexture) {
-        BAINServer.getInstance().getDb().open();
         BAINServer.getInstance().getDb().insert_Image(imgTexture); //adds Image to database
-        BAINServer.getInstance().getDb().close();
     }
 }

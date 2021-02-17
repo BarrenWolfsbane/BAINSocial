@@ -96,7 +96,8 @@ public class DBManager {
 
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
-        if(post.getBlockChainTXN() != null) contentValue.put(DatabaseHelper.P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
+        if (post.getBlockChainTXN() != null)
+            contentValue.put(DatabaseHelper.P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
         contentValue.put(DatabaseHelper.P_ID, post.getPid());
         contentValue.put(DatabaseHelper.P_UID, post.getUid());
         contentValue.put(DatabaseHelper.P_TYPE, post.getPostType());
@@ -104,8 +105,10 @@ public class DBManager {
         contentValue.put(DatabaseHelper.P_REPLYTO, post.getReplyTo());
         contentValue.put(DatabaseHelper.P_TEXT, post.getText());
         contentValue.put(DatabaseHelper.P_ANTITAMPER, post.getAntiTamper());
-        if(post.getResponseList() != null) contentValue.put(DatabaseHelper.P_REPLYLIST, convertArrayToString(post.getResponseList()));
-        if(post.getImages() != null) contentValue.put(DatabaseHelper.P_IMAGELIST, convertArrayToString(post.getImages()));
+        if (post.getResponseList() != null)
+            contentValue.put(DatabaseHelper.P_REPLYLIST, convertArrayToString(post.getResponseList()));
+        if (post.getImages() != null)
+            contentValue.put(DatabaseHelper.P_IMAGELIST, convertArrayToString(post.getImages()));
         database.insert(DatabaseHelper.P_TABLE_NAME, null, contentValue);
     }
 
@@ -121,8 +124,8 @@ public class DBManager {
 
         do {
             Post post = new Post();
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))) != null)
-            post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))) != null)
+                post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_BLOCKCHAIN))));
 
             post.setPostType(cur.getInt(cur.getColumnIndex(DatabaseHelper.P_TYPE)));
             post.setPid(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ID)));
@@ -132,11 +135,11 @@ public class DBManager {
             post.setReplyTo(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYTO)));
             post.setAntiTamper(cur.getString(cur.getColumnIndex(DatabaseHelper.P_ANTITAMPER)));
 
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))) != null)
-            post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))) != null)
+                post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_REPLYLIST))));
 
-            if((cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))) != null)
-            post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
+            if ((cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))) != null)
+                post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(DatabaseHelper.P_IMAGELIST))));
 
             arr.add(post);
         } while (cur.moveToNext());
