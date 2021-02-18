@@ -2,8 +2,12 @@ package tv.bain.bainsocial.datatypes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +55,15 @@ public class Texture implements Serializable {
     public Texture(String UUID, String ImageString) {
         this.UUID = UUID;
         this.ImageString = ImageString;
+    }
+
+    @NonNull
+    public static Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+        final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bmp);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bmp;
     }
 
     public static Bitmap bitmapToMutable(Bitmap bitmap) {

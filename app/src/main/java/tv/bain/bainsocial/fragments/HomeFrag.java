@@ -41,6 +41,7 @@ import tv.bain.bainsocial.utils.Utils;
 import tv.bain.bainsocial.viewmodels.HomeViewModel;
 
 import static android.app.Activity.RESULT_OK;
+import static tv.bain.bainsocial.datatypes.Texture.getBitmapFromDrawable;
 
 public class HomeFrag extends Fragment {
 
@@ -258,15 +259,21 @@ public class HomeFrag extends Fragment {
         NavHeaderBinding binding = NavHeaderBinding.bind(b.navView.getHeaderView(0));
         String idText = "ID: " + BAINServer.getInstance().getUser().getuID();
         binding.headerIDText.setText(idText);
-        binding.hvProfileImage.setImageBitmap(vm.getProfileImage());
+        Bitmap bmp = vm.getProfileImage();
+        if(bmp == null) {
+            Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.mipmap.bainlogo, null);
+            if (drawable != null) {
+                bmp = getBitmapFromDrawable(drawable);
+            }
+        }
 
+        binding.hvProfileImage.setImageBitmap(bmp);
         binding.hvProfileImage.setOnLongClickListener(v -> {
                     launchProfilePicSelectionIntent();
                     return false;
                 }
         );
     }
-
     private void launchProfilePicSelectionIntent() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
