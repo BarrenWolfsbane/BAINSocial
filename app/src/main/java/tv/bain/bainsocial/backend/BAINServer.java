@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import tv.bain.bainsocial.datatypes.Post;
@@ -79,6 +80,7 @@ public class BAINServer extends Service {
     //region Service region
     int mStartMode = START_STICKY;       // indicates how to behave if the service is killed
     IBinder mBinder;                     // interface for clients that bind
+
     boolean mAllowRebind;                // indicates whether onRebind should be used
 
     @Override
@@ -95,6 +97,7 @@ public class BAINServer extends Service {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
         registerReceiver(br, intentFilter);
+
     }
 
     public void setFC(FileControls fc) {
@@ -128,6 +131,7 @@ public class BAINServer extends Service {
     }
 
     public static int A_USER = 0;
+
     public static int A_QUERY = 1;
 
     @Override
@@ -146,7 +150,7 @@ public class BAINServer extends Service {
     public Object Bain_Search(String BAINAddress) {
         Object resultObject;
         if (BAINAddress == null) return null;
-        if ((BAINAddress.substring(0, 7)).toLowerCase().contains("bain://")) {
+        if (BAINAddress.toLowerCase().startsWith("bain://")) {
             BAINAddress = BAINAddress.substring(7); //strips protocol
             String[] searchArray = BAINAddress.split(":");
             String address = searchArray[A_USER];

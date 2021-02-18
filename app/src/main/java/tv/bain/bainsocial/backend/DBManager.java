@@ -17,7 +17,35 @@ import tv.bain.bainsocial.datatypes.Post;
 import tv.bain.bainsocial.datatypes.Texture;
 import tv.bain.bainsocial.datatypes.User;
 
-import static tv.bain.bainsocial.backend.DatabaseHelper.*;
+import static tv.bain.bainsocial.backend.DatabaseHelper.D_PORT;
+import static tv.bain.bainsocial.backend.DatabaseHelper.D_PUB_ADDRESS;
+import static tv.bain.bainsocial.backend.DatabaseHelper.D_TABLE_NAME;
+import static tv.bain.bainsocial.backend.DatabaseHelper.D_UID;
+import static tv.bain.bainsocial.backend.DatabaseHelper.I_ID;
+import static tv.bain.bainsocial.backend.DatabaseHelper.I_STRING;
+import static tv.bain.bainsocial.backend.DatabaseHelper.I_TABLE_NAME;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_ANTITAMPER;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_BLOCKCHAIN;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_COLUMNS_LIST;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_ID;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_IMAGELIST;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_REPLYLIST;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_REPLYTO;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_TABLE_NAME;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_TEXT;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_TIME;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_TYPE;
+import static tv.bain.bainsocial.backend.DatabaseHelper.P_UID;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_HANDLE;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_ID;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_IS_FOLLOW;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_PRIV_KEY;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_PROF_IMG;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_PUB_KEY;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_SECRET;
+import static tv.bain.bainsocial.backend.DatabaseHelper.U_TABLE_NAME;
+import static tv.bain.bainsocial.backend.DatabaseHelper.convertArrayToString;
+import static tv.bain.bainsocial.backend.DatabaseHelper.convertStringToArrayList;
 import static tv.bain.bainsocial.datatypes.Post.postList;
 import static tv.bain.bainsocial.datatypes.Texture.textureList;
 import static tv.bain.bainsocial.datatypes.User.usrList;
@@ -27,10 +55,9 @@ public class DBManager {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
 
-    public DBManager open(Context ctx) throws SQLException {
+    public void open(Context ctx) throws SQLException {
         dbHelper = new DatabaseHelper(ctx);
         database = dbHelper.getWritableDatabase();
-        return this;
     }
 
     public void close() {
@@ -42,8 +69,7 @@ public class DBManager {
     }
 
     public void getMyKeyData(User me) {
-        Cursor cursor = database.query(U_TABLE_NAME, new String[]{U_ID, U_PRIV_KEY, U_PUB_KEY}, null,
-                null, null, null, null, null);
+        Cursor cursor = query(U_TABLE_NAME, new String[]{U_ID, U_PRIV_KEY, U_PUB_KEY});
 
         if (!cursor.moveToFirst()) {
             cursor.close();
@@ -51,28 +77,30 @@ public class DBManager {
         }
 
         if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
-        if (!isEmptyString(cursor.getString(1)))
+        if (!isEmptyString(cursor.getString(1))) {
             me.setPrivateKey(new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), me.getSecret())));
+        }
         if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
 
         cursor.close();
     }
 
     public void getMyKeyData(ICallback cb, User me, SecretKey secret) {
-        String decryptedPrivateKey = "No Key Found";
-        Cursor cursor = database.query(U_TABLE_NAME, new String[]{U_ID, U_PRIV_KEY, U_PUB_KEY}, null,
-                null, null, null, null, null);
+        Cursor cursor = query(U_TABLE_NAME, new String[]{U_ID, U_PRIV_KEY, U_PUB_KEY});
 
-        if (cursor.getCount() > 0) {
-            if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
-            if (!isEmptyString(cursor.getString(1))) {
-                decryptedPrivateKey = new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), secret));
-                me.setPrivateKey(decryptedPrivateKey);
-                cb.loginKeyDBCallback(cursor.getCount());
-                //cb.loginKeyDBCallback(decryptedPrivateKey);
-            }
-            if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
-        } else cb.loginKeyDBCallback(cursor.getCount());
+        if (!cursor.moveToFirst()) {
+            cb.loginKeyDBCallback(cursor.getCount());
+            return;
+        }
+
+        if (!isEmptyString(cursor.getString(0))) me.setuID(cursor.getString(0));
+        if (!isEmptyString(cursor.getString(1))) {
+            String decryptedPrivateKey = new String(Crypt.aesDecrypt(cursor.getString(1).getBytes(), secret));
+            me.setPrivateKey(decryptedPrivateKey);
+            cb.loginKeyDBCallback(cursor.getCount());
+            //cb.loginKeyDBCallback(decryptedPrivateKey);
+        }
+        if (!isEmptyString(cursor.getString(2))) me.setPublicKey(cursor.getString(2));
         cursor.close();
     }
 
@@ -89,14 +117,11 @@ public class DBManager {
     }
 
     public Cursor fetch() {
-        String[] columns = P_COLUMNS_LIST;
-        return database.query(P_TABLE_NAME, columns, null, null, null, null, P_TIME + " DESC");
+        return database.query(P_TABLE_NAME, P_COLUMNS_LIST, null, null, null, null, P_TIME + " DESC");
     }
 
     public void insert_Post(Post post) {
         ContentValues contentValue = new ContentValues();
-        if (post.getBlockChainTXN() != null)
-            contentValue.put(P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
         contentValue.put(P_ID, post.getPid());
         contentValue.put(P_UID, post.getUid());
         contentValue.put(P_TYPE, post.getPostType());
@@ -104,10 +129,15 @@ public class DBManager {
         contentValue.put(P_REPLYTO, post.getReplyTo());
         contentValue.put(P_TEXT, post.getText());
         contentValue.put(P_ANTITAMPER, post.getAntiTamper());
-        if (post.getResponseList() != null)
+        if (post.getBlockChainTXN() != null) {
+            contentValue.put(P_BLOCKCHAIN, convertArrayToString(post.getBlockChainTXN()));
+        }
+        if (post.getResponseList() != null) {
             contentValue.put(P_REPLYLIST, convertArrayToString(post.getResponseList()));
-        if (post.getImages() != null)
+        }
+        if (post.getImages() != null) {
             contentValue.put(P_IMAGELIST, convertArrayToString(post.getImages()));
+        }
         database.insert(P_TABLE_NAME, null, contentValue);
     }
 
@@ -123,8 +153,6 @@ public class DBManager {
 
         do {
             Post post = new Post();
-            if ((cur.getString(cur.getColumnIndex(P_BLOCKCHAIN))) != null)
-                post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_BLOCKCHAIN))));
 
             post.setPostType(cur.getInt(cur.getColumnIndex(P_TYPE)));
             post.setPid(cur.getString(cur.getColumnIndex(P_ID)));
@@ -134,11 +162,15 @@ public class DBManager {
             post.setReplyTo(cur.getString(cur.getColumnIndex(P_REPLYTO)));
             post.setAntiTamper(cur.getString(cur.getColumnIndex(P_ANTITAMPER)));
 
-            if ((cur.getString(cur.getColumnIndex(P_REPLYLIST))) != null)
+            if ((cur.getString(cur.getColumnIndex(P_BLOCKCHAIN))) != null) {
+                post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_BLOCKCHAIN))));
+            }
+            if ((cur.getString(cur.getColumnIndex(P_REPLYLIST))) != null) {
                 post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_REPLYLIST))));
-
-            if ((cur.getString(cur.getColumnIndex(P_IMAGELIST))) != null)
+            }
+            if ((cur.getString(cur.getColumnIndex(P_IMAGELIST))) != null) {
                 post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_IMAGELIST))));
+            }
 
             arr.add(post);
         } while (cur.moveToNext());
@@ -157,16 +189,15 @@ public class DBManager {
         database.insert(U_TABLE_NAME, null, contentValue);
     }
 
-    public int update_User(User user, String key, String Value) {
+    public void update_User(User user, String key, String Value) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(key, Value);
-        int i = database.update(U_TABLE_NAME, contentValues, U_ID + " = ?", new String[]{user.getuID()});
-        return i;
+        database.update(U_TABLE_NAME, contentValues, U_ID + " = ?", new String[]{user.getuID()});
     }
 
-    public User get_User_By_Hash(ICallback cb, String hash) {
-        User thisUser = null;
-        Cursor res = database.query(
+    public void get_User_By_Hash(ICallback cb, String hash) {
+        User thisUser;
+        Cursor cur = database.query(
                 DatabaseHelper.U_TABLE_NAME,
                 new String[]{
                         U_ID,
@@ -182,38 +213,39 @@ public class DBManager {
                 null,
                 null,
                 null);
-        if (res.moveToFirst()) {
-            do {
-                String uID = res.getString(res.getColumnIndex(U_ID));
-                String uHandle = res.getString(res.getColumnIndex(U_HANDLE));
-                String uProfImg = res.getString(res.getColumnIndex(U_PROF_IMG));
-                String uPubKey = res.getString(res.getColumnIndex(U_PUB_KEY));
-                String uPrivKey = res.getString(res.getColumnIndex(U_PRIV_KEY));
-                Boolean uIsFollow = (res.getInt(res.getColumnIndex(U_IS_FOLLOW)) == 1);
 
-                thisUser = new User(uID, uHandle, uIsFollow, uPubKey, uProfImg);
-                thisUser.setPrivateKey(uPrivKey);
-                //Toast.makeText(context, "UserNum:" + uID, Toast.LENGTH_SHORT).show();
-            } while (res.moveToNext());
-            BAINServer.getInstance().setUser(thisUser); //Updates entire User with data pulled from DB
-            cb.loginKeyDBCallback(res.getCount());
-        } else {
+        if (!cur.moveToFirst()) {
             cb.loginKeyDBCallback(0);
+            return;
         }
-        res.close(); //cursors need to be closed to prevent memory leaks
-        return thisUser;
+
+        do {
+            String uID = cur.getString(cur.getColumnIndex(U_ID));
+            String uHandle = cur.getString(cur.getColumnIndex(U_HANDLE));
+            String uProfImg = cur.getString(cur.getColumnIndex(U_PROF_IMG));
+            String uPubKey = cur.getString(cur.getColumnIndex(U_PUB_KEY));
+            String uPrivKey = cur.getString(cur.getColumnIndex(U_PRIV_KEY));
+            Boolean uIsFollow = (cur.getInt(cur.getColumnIndex(U_IS_FOLLOW)) == 1);
+
+            thisUser = new User(uID, uHandle, uIsFollow, uPubKey, uProfImg);
+            thisUser.setPrivateKey(uPrivKey);
+        } while (cur.moveToNext());
+        BAINServer.getInstance().setUser(thisUser); //Updates entire User with data pulled from DB
+        cb.loginKeyDBCallback(cur.getCount());
+        cur.close();
     }
 
     public void insert_Image(Texture image) {
-        Cursor res = database.query(I_TABLE_NAME,
+        Cursor cur = database.query(I_TABLE_NAME,
                 null, I_ID + " = ?", new String[]{image.getUUID()},
                 null, null, null, "1");
-        if (res.moveToFirst()) return;
+        if (cur.moveToFirst()) return;
 
         ContentValues contentValue = new ContentValues();
         contentValue.put(I_ID, image.getUUID());
         contentValue.put(I_STRING, image.getImageString());
         database.insert(I_TABLE_NAME, null, contentValue);
+        cur.close();
     }
 
     public Object array_ID_Search(String Hash) {
@@ -230,8 +262,6 @@ public class DBManager {
     }
 
     public Object db_ID_Search(String hash) {
-        Object found = null;
-
         String[][] searchArray = new String[3][2];
         searchArray[0][0] = U_TABLE_NAME;
         searchArray[0][1] = U_ID;
@@ -240,55 +270,72 @@ public class DBManager {
         searchArray[2][0] = I_TABLE_NAME;
         searchArray[2][1] = I_ID;
 
-        for (int i = 0; i < searchArray.length; i++) {
-            Cursor res = database.query(searchArray[i][0],
-                    null, searchArray[i][1] + " = ?", new String[]{hash},
+        for (String[] strings : searchArray) {
+            Cursor cur = database.query(strings[0],
+                    null, strings[1] + " = ?", new String[]{hash},
                     null, null, null, "1");
-            if (res.moveToFirst()) {
+            if (cur.moveToFirst()) {
                 do {
-                    if (searchArray[i][0].equals(DatabaseHelper.U_TABLE_NAME)) {
-                        found = new User();
-                        ((User) found).setuID(res.getString(res.getColumnIndex(U_ID)));
-                        ((User) found).setDisplayName(res.getString(res.getColumnIndex(U_HANDLE)));
-                        ((User) found).setProfileImageID(res.getString(res.getColumnIndex(U_PROF_IMG)));
-                        ((User) found).setPublicKey(res.getString(res.getColumnIndex(U_PUB_KEY)));
-                        ((User) found).setIsFollowing((res.getInt(res.getColumnIndex(U_IS_FOLLOW)) == 1));
-                        usrList.add(((User) found));
-                        return found;
-                    } else if (searchArray[i][0].equals(DatabaseHelper.P_TABLE_NAME)) {
-                        found = new Post();
-                        ((Post) found).setBlockChainTXN(convertStringToArrayList(res.getString(res.getColumnIndex(P_BLOCKCHAIN))));
-                        ((Post) found).setPostType(res.getInt(res.getColumnIndex(P_TYPE)));
-                        ((Post) found).setPid(res.getString(res.getColumnIndex(P_ID)));
-                        ((Post) found).setUid(res.getString(res.getColumnIndex(P_UID)));
-                        ((Post) found).setText(res.getString(res.getColumnIndex(P_TEXT)));
-                        ((Post) found).setTimeCreated(res.getLong(res.getColumnIndex(P_TIME)));
-                        ((Post) found).setReplyTo(res.getString(res.getColumnIndex(P_REPLYTO)));
-                        ((Post) found).setAntiTamper(res.getString(res.getColumnIndex(P_ANTITAMPER)));
-                        ((Post) found).setResponseList(convertStringToArrayList(res.getString(res.getColumnIndex(P_REPLYLIST))));
-                        ((Post) found).setImages(convertStringToArrayList(res.getString(res.getColumnIndex(P_IMAGELIST))));
-
-
-                        postList.add(((Post) found));
-                        return found;
-                    } else if (searchArray[i][0].equals(I_TABLE_NAME)) {
-                        found = new Texture();
-                        ((Texture) found).setUUID(res.getString(res.getColumnIndex(I_ID)));
-                        ((Texture) found).setImageStringD(res.getString(res.getColumnIndex(I_STRING)));
-                        textureList.add(((Texture) found));
-                        return found;
+                    switch (strings[0]) {
+                        case DatabaseHelper.U_TABLE_NAME:
+                            User user = createUserFromCursor(cur);
+                            usrList.add(user);
+                            return user;
+                        case DatabaseHelper.P_TABLE_NAME:
+                            Post post = createPostFromCursor(cur);
+                            postList.add(post);
+                            return post;
+                        case I_TABLE_NAME:
+                            Texture tex = createTextureFromCursor(cur);
+                            textureList.add(tex);
+                            return tex;
                     }
-                } while (res.moveToNext());
+                } while (cur.moveToNext());
             }
+            cur.close();
         }
-        return found;
+        return null;
     }
 
-    public String[] directory_Search(String hash){
+    private Texture createTextureFromCursor(Cursor cur) {
+        Texture tex = new Texture();
+        tex.setUUID(cur.getString(cur.getColumnIndex(I_ID)));
+        tex.setImageStringD(cur.getString(cur.getColumnIndex(I_STRING)));
+        return tex;
+    }
+
+    private User createUserFromCursor(Cursor cur) {
+        User user = new User();
+        user.setuID(cur.getString(cur.getColumnIndex(U_ID)));
+        user.setDisplayName(cur.getString(cur.getColumnIndex(U_HANDLE)));
+        user.setProfileImageID(cur.getString(cur.getColumnIndex(U_PROF_IMG)));
+        user.setPublicKey(cur.getString(cur.getColumnIndex(U_PUB_KEY)));
+        user.setIsFollowing((cur.getInt(cur.getColumnIndex(U_IS_FOLLOW)) == 1));
+        return user;
+    }
+
+    private Post createPostFromCursor(Cursor cur) {
+        Post post = new Post();
+        post.setBlockChainTXN(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_BLOCKCHAIN))));
+        post.setPostType(cur.getInt(cur.getColumnIndex(P_TYPE)));
+        post.setPid(cur.getString(cur.getColumnIndex(P_ID)));
+        post.setUid(cur.getString(cur.getColumnIndex(P_UID)));
+        post.setText(cur.getString(cur.getColumnIndex(P_TEXT)));
+        post.setTimeCreated(cur.getLong(cur.getColumnIndex(P_TIME)));
+        post.setReplyTo(cur.getString(cur.getColumnIndex(P_REPLYTO)));
+        post.setAntiTamper(cur.getString(cur.getColumnIndex(P_ANTITAMPER)));
+        post.setResponseList(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_REPLYLIST))));
+        post.setImages(convertStringToArrayList(cur.getString(cur.getColumnIndex(P_IMAGELIST))));
+        return post;
+    }
+
+    public String[] directory_Search(String hash) {
         Cursor res = database.query(D_TABLE_NAME, null,
                 D_UID + " = ?", //Where Clause
                 new String[]{hash}, null, null, null);
+
         if (!res.moveToFirst()) return null;
+
         String[] address = new String[3];
         do {
             address[res.getColumnIndex(D_UID)] = res.getString(res.getColumnIndex(D_UID));
@@ -296,25 +343,35 @@ public class DBManager {
             address[res.getColumnIndex(D_PORT)] = res.getString(res.getColumnIndex(D_PORT));
         } while (res.moveToNext());
 
+        res.close();
         return address;
     }
-    public void directory_Insert(String hash, String address, String port){
+
+    public void directory_Insert(String hash, String address, String port) {
         String[] dirSearch = directory_Search(hash);
         directory_update(hash, address, port);
-        if(dirSearch == null) {
-            ContentValues contentValue = new ContentValues();
-            contentValue.put(D_UID, hash);
-            contentValue.put(D_PUB_ADDRESS, address);
-            contentValue.put(D_PORT, port);
-            database.insert(D_TABLE_NAME, null, contentValue);
+
+        if (dirSearch != null) {
+            directory_update(hash, address, port);
+            return;
         }
-        else { directory_update(hash, address, port); }
+
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(D_UID, hash);
+        contentValue.put(D_PUB_ADDRESS, address);
+        contentValue.put(D_PORT, port);
+        database.insert(D_TABLE_NAME, null, contentValue);
     }
-    public int directory_update(String hash, String address, String port) {
+
+    public void directory_update(String hash, String address, String port) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(D_PUB_ADDRESS, address);
         contentValues.put(D_PORT, port);
-        int i = database.update(D_TABLE_NAME, contentValues, D_UID + " = ?", new String[]{hash});
-        return i;
+        database.update(D_TABLE_NAME, contentValues, D_UID + " = ?", new String[]{hash});
     }
+
+    private Cursor query(String table, String[] columns) {
+        return database.query(table, columns, null, null, null, null, null);
+    }
+
 }

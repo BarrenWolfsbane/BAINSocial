@@ -37,6 +37,7 @@ public class Communications extends BroadcastReceiver {
             e.printStackTrace();
         }
     }
+
     private ServerSocket serverSocket;
 
     public String yourIP(){
@@ -91,7 +92,7 @@ public class Communications extends BroadcastReceiver {
     }
     public Communications(){}
 
-    private static int[] CommonlyBlockedPorts = {
+    private static final int[] CommonlyBlockedPorts = {
             0,      // is a reserved port, which means it should not be used by applications. Network abuse has prompted the need to block this port.	IPv4/IPv6
             25,     //TCP	SMTP	Both	Port 25 is unsecured, and Botnet spammers can use it to send spam. This does not affect Xfinity Connect usage. We recommend learning more about configuring your email settings to Comcast email to use port 587.	IPv4/IPv6
             67,     //UDP	BOOTP, DHCP	Downstream	UDP Port 67, which is used to obtain dynamic Internet Protocol (IP) address information from our dynamic host configuration protocol (DHCP) server, is vulnerable to malicious hacks.	IPv4

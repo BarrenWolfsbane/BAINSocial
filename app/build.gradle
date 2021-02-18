@@ -64,4 +64,5 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.2.0'
 }
 
+
 apply from: 'https://gist.githubusercontent.com/kibotu/994c9cc65fe623b76b76fedfac74b34b/raw/65ee52482ba65050e015f4b00d8d2fc9172a10e8/javadoc.gradle'
