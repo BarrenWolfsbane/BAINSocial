@@ -21,7 +21,12 @@ import static tv.bain.bainsocial.datatypes.User.usrList;
 public class BAINServer extends Service {
 
     private static BAINServer instance = null; //we use this to call on functions here
+    private User user;
+    private DBManager db;
+    private FileControls fc;
+    private Communications br;
 
+    //region Getters and setters
     public static BAINServer getInstance() {
         return instance;
     }
@@ -30,8 +35,14 @@ public class BAINServer extends Service {
         return instance != null;
     }
 
-    /* Stored User */
-    private User user;
+    public static String BAINStrip(String BAINAddress, Integer segment) {
+        if (BAINAddress.toLowerCase().startsWith("bain://")) {
+            BAINAddress = BAINAddress.substring(7); //strips protocol
+            String[] searchArray = BAINAddress.split(":");
+            return searchArray[segment];
+        }
+        return "";
+    }
 
     public User getUser() {
         return user;
@@ -41,45 +52,36 @@ public class BAINServer extends Service {
         this.user = user;
     }
 
-    private DBManager db;
-
     public DBManager getDb() {
         return db;
+    }
+
+    public FileControls getFc() {
+        return fc;
     }
 
     public void setDB(DBManager db) {
         this.db = db;
     }
 
-    private FileControls fc;
-
-    public FileControls getFc() {
-        return fc;
+    public void setFC(FileControls fc) {
+        this.fc = fc;
     }
-
-    public static String BAINStrip(String BAINAddress, Integer segment) {
-        if ((BAINAddress.substring(0, 7)).toLowerCase().contains("bain://")) {
-            BAINAddress = BAINAddress.substring(7); //strips protocol
-            String[] searchArray = BAINAddress.split(":");
-            return searchArray[segment];
-        }
-        return "";
-    }
-
-    private Communications br;
 
     public Communications getBr() {
         return br;
     }
 
+    //endregion
+
     public void setBr(Communications Br) {
         this.br = br;
     }
 
-
     //region Service region
     int mStartMode = START_STICKY;       // indicates how to behave if the service is killed
     IBinder mBinder;                     // interface for clients that bind
+
     boolean mAllowRebind;                // indicates whether onRebind should be used
 
     @Override
@@ -97,8 +99,9 @@ public class BAINServer extends Service {
         try {
             AndroidWebServer androidWebServer = new AndroidWebServer(12345);
             androidWebServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (IOException e) { e.printStackTrace(); }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
@@ -106,8 +109,17 @@ public class BAINServer extends Service {
 
     }
 
-    public void setFC(FileControls fc) {
-        this.fc = fc;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // The service is starting, due to a call to startService()
+        super.onStartCommand(intent, flags, startId);
+        instance = this;
+
+        if (usrList == null) User.usrList = new ArrayList<>();
+        if (postList == null) Post.postList = new ArrayList<>();
+        if (textureList == null) Texture.textureList = new ArrayList<>();
+
+        return mStartMode;
     }
 
     @Override
@@ -131,31 +143,18 @@ public class BAINServer extends Service {
         instance = null;
     } // The service is no longer used and is being destroyed
 
-    //region Notice region
     public void SendToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
     public static int A_USER = 0;
+
     public static int A_QUERY = 1;
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // The service is starting, due to a call to startService()
-        super.onStartCommand(intent, flags, startId);
-        instance = this;
-
-        if (usrList == null) User.usrList = new ArrayList<>();
-        if (postList == null) Post.postList = new ArrayList<>();
-        if (textureList == null) Texture.textureList = new ArrayList<>();
-
-        return mStartMode;
-    }
 
     public Object Bain_Search(String BAINAddress) {
         Object resultObject;
         if (BAINAddress == null) return null;
-        if ((BAINAddress.substring(0, 7)).toLowerCase().contains("bain://")) {
+        if (BAINAddress.toLowerCase().startsWith("bain://")) {
             BAINAddress = BAINAddress.substring(7); //strips protocol
             String[] searchArray = BAINAddress.split(":");
             String address = searchArray[A_USER];
