@@ -13,28 +13,38 @@ PROJECT STATUS
 The project is only just now getting started, There is little complete and currently it is only
 being developed on Android. Plans are made to expand to other platforms later.
 
- - Currently the android app creates and stores PGP key data required for secure communications
-  between users on the network.
- - As of 1/31/21 we have added a system service to the app so it will run in the background
-----------------------------------------------------------------------------------------------------
-FUTURE INTENTS
-The next step in this project is to formulate the data structure, setting up data types and objects
-that will be used to store post and user data in short term memory
+ - Account Creation: DONE
+ The User can now enter a password on first screen to secure their device. This it then used to create
+ key pair sets which generate their ID on the network. So long as their Private Key file is saved the
+ Data within it will give them the UUID for their account.
 
- - USER object is created, we will be adding a storage and retrieval method for this data soon.
- - POST data will need to be created these posts will contain fingerprints that describe the data
- within the post and prevent alterations as any posts which do not match fingerprints will be
- flagged on each end as possibly altered.
- - the ability to make posts offline will be added as soon as we hash out how we want to format it.
- - The following functions will be added to the System Service:
- this service will listen for requests for posts and respond spooling up threads as necessary
- this service will also act as a relay to help route users through tunnels preventing IP tracing.
-----------------------------------------------------------------------------------------------------
+ - Journaling: DONE
+ The App Currently works fully as a journaling system where you can change your profile photo and
+ begin making posts. This stores the data into the internal databases which is the first step to
+ to getting the system to work.
+
+ - Networking: STARTED
+ Research started on communications, CGN will be a problem. Looking into torrent based file sharing
+  
+ - Encyption: NOT STARTED
+ This is not started as we first need to get basic communications done. once that is done we have the
+ standard in which we can build upon. It is possible to start encypting and decrypting database info
+ however it may impede search in future if we intend to have systems use context to pull data.
+
+ - Crypto: NOT STARTED
+ Crypto wallets would be nice to add but it is bells and whistles. Furthermore we have yet to plan
+ the use of Crypto on the network.
+
+ - Self Deployment: STARTED
+ As part of the communications a mini webserver has been added, this will be a means to allow people
+ on local network to download a copy of the APK from nearby users in the case that this app is removed
+ from other marketplaces.
+
+
+
 IDEAS
  - Rebranding as a Service rather then a platform
  - Vivox implementation? (is this possible?)
- - Self Distribution - Spooling up a web server that can be connected remotely or locally to
- download the platform.
 
 If You are interested in helping with Development Join us on Discord!
 https://discord.gg/sbpw6Hm8RV
