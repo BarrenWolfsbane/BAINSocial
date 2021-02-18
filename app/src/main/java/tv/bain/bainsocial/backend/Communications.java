@@ -18,6 +18,10 @@ import static tv.bain.bainsocial.utils.Utils.getPublicIPAddress;
 
 
 public class Communications extends BroadcastReceiver {
+    private int port = 6666;
+    public void setPort(int port){ this.port = port; }
+    public int getPort(){ return port; }
+
     private Context context;
     public Communications(Context c) {
         context = c;
@@ -56,10 +60,10 @@ public class Communications extends BroadcastReceiver {
 
         IP2Use = getPublicIPAddress();
         //using IP2Use
-        //Object obj = BAINServer.getInstance().getDb().directory_Search(BAINServer.getInstance().getUser().getuID());
+
         BAINServer.getInstance().getDb().directory_Insert(
-                "USER",
-                IP2Use, "80");
+                BAINServer.getInstance().getUser().getuID(),
+                IP2Use, Integer.toString(port));
     }
     public boolean isConnectedViaWifi() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -106,3 +110,4 @@ public class Communications extends BroadcastReceiver {
         }
     }
 }
+

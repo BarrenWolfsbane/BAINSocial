@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import tv.bain.bainsocial.datatypes.Post;
@@ -91,6 +92,13 @@ public class BAINServer extends Service {
         BAINServer.getInstance().setUser(new User());
         BAINServer.getInstance().getDb().open(getApplicationContext());
         br = new Communications(this);
+
+
+        try {
+            AndroidWebServer androidWebServer = new AndroidWebServer(12345);
+            androidWebServer.start();
+        }
+        catch (IOException e) { e.printStackTrace(); }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
