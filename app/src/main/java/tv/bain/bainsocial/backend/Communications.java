@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -18,13 +19,23 @@ import static tv.bain.bainsocial.utils.Utils.getPublicIPAddress;
 
 
 public class Communications extends BroadcastReceiver {
-    private int port = 6666;
+    private int port = 3333;
     public void setPort(int port){ this.port = port; }
     public int getPort(){ return port; }
+
+    private AndroidWebServer webServer;
+    public AndroidWebServer getWebServer(){ return webServer; }
+    public void setWebServer(){ this.webServer = webServer; }
 
     private Context context;
     public Communications(Context c) {
         context = c;
+        initWebServer();
+        try {
+            getWebServer().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private ServerSocket serverSocket;
 
@@ -45,6 +56,7 @@ public class Communications extends BroadcastReceiver {
                 if there was a change update the Directory and send out a packet of data to each user you know
                  */
                 AddressUpdate();
+
             } else {
                 // wifi connection was lost
             }
@@ -64,6 +76,9 @@ public class Communications extends BroadcastReceiver {
         BAINServer.getInstance().getDb().directory_Insert(
                 BAINServer.getInstance().getUser().getuID(),
                 IP2Use, Integer.toString(port));
+    }
+    public void initWebServer(){
+        webServer = new AndroidWebServer(port);
     }
     public boolean isConnectedViaWifi() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

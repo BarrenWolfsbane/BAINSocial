@@ -25,7 +25,7 @@ being developed on Android. Plans are made to expand to other platforms later.
 
  - Networking: STARTED
  Research started on communications, CGN will be a problem. Looking into torrent based file sharing
-  
+
  - Encyption: NOT STARTED
  This is not started as we first need to get basic communications done. once that is done we have the
  standard in which we can build upon. It is possible to start encypting and decrypting database info
